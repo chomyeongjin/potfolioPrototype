@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A minimalist portfolio website inspired by modern editorial layouts.">
+    <title>PORTFOLIO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <h1 class="logo"><a href="#">PORTFOLIO</a></h1>
+        <nav class="nav">
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Monthly Archive</a></li>
+                <li><a href="works.html" style="font-weight: 600; color: var(--text-color);">Works</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="gallery">
+            <div class="uniform-grid">
+                <div class="grid-item">
+                    <img src="./sources/DJI_0198.webp" alt="Portfolio Image 1" loading="lazy">
+                </div>
+                <div class="grid-item">
+                    <img src="./sources/IMG_0219.webp" alt="Portfolio Image 2" loading="lazy">
+                </div>
+                <div class="grid-item">
+                    <img src="./sources/IMG_0300.webp" alt="Portfolio Image 3" loading="lazy">
+                </div>
+                <div class="grid-item">
+                    <img src="./sources/IMG_6457.webp" alt="Portfolio Image 4" loading="lazy">
+                </div>
+                <div class="grid-item">
+                    <img src="./sources/IMG_6615.webp" alt="Portfolio Image 5" loading="lazy">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Simple menu toggle for mobile
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+            this.classList.toggle('open');
+        });
+    </script>
+</body>
+</html>
