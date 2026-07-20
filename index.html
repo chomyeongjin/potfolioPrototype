@@ -14,7 +14,7 @@
 
 <body>
     <header class="header">
-        <h1 class="logo"><a href="#">PORTFOLIO</a></h1>
+        <h1 class="logo"><a href="index.html">PORTFOLIO</a></h1>
         <nav class="nav">
             <button class="menu-toggle" aria-label="Toggle Menu">
                 <span></span>
@@ -22,7 +22,6 @@
                 <span></span>
             </button>
             <ul class="nav-links">
-                <li><a href="index.html" style="font-weight: 600; color: var(--text-color);">Monthly Archive</a></li>
                 <li><a href="works.html">Works</a></li>
                 <li><a href="#">About</a></li>
                 <li><a href="#">Contact</a></li>
@@ -31,44 +30,69 @@
     </header>
 
     <main class="main-content">
-        <section class="gallery">
-            <div class="masonry-grid">
-                <div class="grid-item">
-                    <img src="./sources/DJI_0198.webp" alt="Portfolio Image 1" loading="lazy">
-                    <div class="hover-overlay">
-                        <h3>Summer Breeze</h3>
-                        <p>A gentle exploration of light and space in urban environments.</p>
-                    </div>
-                </div>
-                <div class="grid-item">
-                    <img src="./sources/IMG_0219.webp" alt="Portfolio Image 2" loading="lazy">
-                    <div class="hover-overlay">
-                        <h3>Concrete Dreams</h3>
-                        <p>Documenting the brutalist architecture across the city.</p>
-                    </div>
-                </div>
-                <div class="grid-item">
-                    <img src="./sources/IMG_0300.webp" alt="Portfolio Image 3" loading="lazy">
-                    <div class="hover-overlay">
-                        <h3>Morning Light</h3>
-                        <p>Capturing the ephemeral beauty of the golden hour.</p>
-                    </div>
-                </div>
-                <div class="grid-item">
-                    <img src="./sources/IMG_6457.webp" alt="Portfolio Image 4" loading="lazy">
-                    <div class="hover-overlay">
-                        <h3>Silent Echoes</h3>
-                        <p>A visual narrative of abandoned spaces and forgotten memories.</p>
-                    </div>
-                </div>
-                <div class="grid-item">
-                    <img src="./sources/IMG_6615.webp" alt="Portfolio Image 5" loading="lazy">
-                    <div class="hover-overlay">
-                        <h3>Modern Life</h3>
-                        <p>Everyday moments framed through a minimalist lens.</p>
-                    </div>
-                </div>
+        <section class="gallery carousel-container"
+            style="background-color: transparent; aspect-ratio: auto; height: 75vh; max-width: 1200px; margin: 0 auto;">
+            <button class="carousel-btn prev-btn" aria-label="Previous image">&#10094;</button>
+            <div class="carousel-track-container">
+                <ul class="carousel-track">
+                    <li class="carousel-slide">
+                        <div class="grid-item"
+                            style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
+                            <img src="./sources/DJI_0198.webp" alt="Portfolio Image 1" loading="lazy"
+                                style="height: 100%; width: 100%; object-fit: contain;">
+                            <div class="hover-overlay">
+                                <h3>Summer Breeze</h3>
+                                <p>A gentle exploration of light and space in urban environments.</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="carousel-slide">
+                        <div class="grid-item"
+                            style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
+                            <img src="./sources/IMG_0219.webp" alt="Portfolio Image 2" loading="lazy"
+                                style="height: 100%; width: 100%; object-fit: contain;">
+                            <div class="hover-overlay">
+                                <h3>Concrete Dreams</h3>
+                                <p>Documenting the brutalist architecture across the city.</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="carousel-slide">
+                        <div class="grid-item"
+                            style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
+                            <img src="./sources/IMG_0300.webp" alt="Portfolio Image 3" loading="lazy"
+                                style="height: 100%; width: 100%; object-fit: contain;">
+                            <div class="hover-overlay">
+                                <h3>Morning Light</h3>
+                                <p>Capturing the ephemeral beauty of the golden hour.</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="carousel-slide">
+                        <div class="grid-item"
+                            style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
+                            <img src="./sources/IMG_6457.webp" alt="Portfolio Image 4" loading="lazy"
+                                style="height: 100%; width: 100%; object-fit: contain;">
+                            <div class="hover-overlay">
+                                <h3>Silent Echoes</h3>
+                                <p>A visual narrative of abandoned spaces and forgotten memories.</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="carousel-slide">
+                        <div class="grid-item"
+                            style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
+                            <img src="./sources/IMG_6615.webp" alt="Portfolio Image 5" loading="lazy"
+                                style="height: 100%; width: 100%; object-fit: contain;">
+                            <div class="hover-overlay">
+                                <h3>Modern Life</h3>
+                                <p>Everyday moments framed through a minimalist lens.</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
+            <button class="carousel-btn next-btn" aria-label="Next image">&#10095;</button>
         </section>
     </main>
 
@@ -77,6 +101,43 @@
         document.querySelector('.menu-toggle').addEventListener('click', function () {
             document.querySelector('.nav-links').classList.toggle('active');
             this.classList.toggle('open');
+        });
+
+        // Carousel logic
+        const track = document.querySelector('.carousel-track');
+        const slides = Array.from(track.children);
+        const nextButton = document.querySelector('.next-btn');
+        const prevButton = document.querySelector('.prev-btn');
+
+        let currentSlideIndex = 0;
+
+        const updateSlidePosition = () => {
+            const slideWidth = slides[0].getBoundingClientRect().width;
+            track.style.transform = 'translateX(-' + slideWidth * currentSlideIndex + 'px)';
+        };
+
+        nextButton.addEventListener('click', () => {
+            if (currentSlideIndex < slides.length - 1) {
+                currentSlideIndex++;
+            } else {
+                currentSlideIndex = 0; // Loop back to first
+            }
+            updateSlidePosition();
+        });
+
+        prevButton.addEventListener('click', () => {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+            } else {
+                currentSlideIndex = slides.length - 1; // Loop back to last
+            }
+            updateSlidePosition();
+        });
+
+        // Ensure accurate position on resize
+        window.addEventListener('resize', () => {
+            // slightly delay to ensure width is recalculated
+            setTimeout(updateSlidePosition, 50);
         });
     </script>
 </body>

@@ -56,10 +56,39 @@ a {
     text-transform: uppercase;
 }
 
+.page-title {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 36px);
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+}
+
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 2rem;
+    gap: 1.5rem;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: var(--spacing);
+    width: auto;
+    flex-direction: column;
+    align-items: flex-end;
+    
+    /* Animation setup */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-15px);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.nav-links.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 .nav-links a {
@@ -75,7 +104,7 @@ a {
 }
 
 .menu-toggle {
-    display: none;
+    display: flex;
     background: none;
     border: none;
     cursor: pointer;
@@ -97,6 +126,62 @@ a {
 .main-content {
     padding: calc(var(--spacing) * 4) var(--spacing) var(--spacing) var(--spacing);
     min-height: 100vh;
+}
+
+/* Filter Section */
+.filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-color);
+    margin-right: 0.5rem;
+}
+
+.filter-btn {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--accent-color);
+}
+
+.filter-btn:hover {
+    border-color: var(--text-color);
+    color: var(--text-color);
+}
+
+.filter-btn.active {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    border-color: var(--text-color);
+}
+
+.grid-item.hidden {
+    display: none !important;
 }
 
 /* Uniform Grid Layout */
@@ -215,26 +300,7 @@ a {
         padding: 1.5rem;
     }
 
-    .menu-toggle {
-        display: flex;
-    }
 
-    .nav-links {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background-color: var(--bg-color);
-        flex-direction: column;
-        align-items: center;
-        padding: 2rem 0;
-        border-top: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
 
     .uniform-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -275,15 +341,33 @@ a {
 
 .project-info {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 4rem;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--accent-color);
+}
+
+.project-tags {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding-bottom: 6rem; /* 넉넉한 하단 여백 */
+}
+
+.project-tags .tag {
+    font-size: 0.7rem;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
 }
 
 .info-row {

@@ -8,11 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
     <header class="header">
-        <h1 class="logo"><a href="#">PORTFOLIO</a></h1>
+        <h1 class="logo"><a href="index.html">PORTFOLIO</a></h1>
+        <h2 class="page-title">Works</h2>
         <nav class="nav">
             <button class="menu-toggle" aria-label="Toggle Menu">
                 <span></span>
@@ -20,7 +21,6 @@
                 <span></span>
             </button>
             <ul class="nav-links">
-                <li><a href="index.html">Monthly Archive</a></li>
                 <li><a href="works.html" style="font-weight: 600; color: var(--text-color);">Works</a></li>
                 <li><a href="#">About</a></li>
                 <li><a href="#">Contact</a></li>
@@ -29,51 +29,67 @@
     </header>
 
     <main class="main-content">
+        <section class="filter-section">
+            <div class="filter-group location-filters">
+                <span class="filter-label">Location:</span>
+                <button class="filter-btn active" data-type="location" data-filter="all">All</button>
+                <button class="filter-btn" data-type="location" data-filter="seoul">Seoul</button>
+                <button class="filter-btn" data-type="location" data-filter="busan">Busan</button>
+                <button class="filter-btn" data-type="location" data-filter="bundang">Bundang</button>
+            </div>
+            <div class="filter-group tag-filters">
+                <span class="filter-label">Tag:</span>
+                <button class="filter-btn active" data-type="tag" data-filter="all">All</button>
+                <button class="filter-btn" data-type="tag" data-filter="apartment">Apartment</button>
+                <button class="filter-btn" data-type="tag" data-filter="building">Building</button>
+            </div>
+        </section>
+
         <section class="gallery">
             <div class="uniform-grid">
-                <a href="project-1.html" class="grid-item">
+                <a href="project-1.html" class="grid-item" data-location="seoul" data-tag="apartment">
                     <img src="./sources/DJI_0198.webp" alt="Portfolio Image 1" loading="lazy">
                     <div class="hover-overlay">
                         <h3>Project Name</h3>
                         <p>Artist Name</p>
-                        <p>Location</p>
-                        <p>Date</p>
+                        <p>Seoul</p>
+                        <p>Apartment</p>
                     </div>
                 </a>
-                <div class="grid-item">
+                <div class="grid-item" data-location="busan" data-tag="building">
                     <img src="./sources/IMG_0219.webp" alt="Portfolio Image 2" loading="lazy">
                     <div class="hover-overlay">
                         <h3>Project Name</h3>
                         <p>Artist Name</p>
-                        <p>Location</p>
-                        <p>Date</p>
+                        <p>Busan</p>
+                        <p>Building</p>
                     </div>
                 </div>
-                <div class="grid-item">
+                <div class="grid-item" data-location="bundang" data-tag="apartment">
                     <img src="./sources/IMG_0300.webp" alt="Portfolio Image 3" loading="lazy">
                     <div class="hover-overlay">
                         <h3>Project Name</h3>
                         <p>Artist Name</p>
-                        <p>Location</p>
-                        <p>Date</p>
+                        <p>Bundang</p>
+                        <p>Apartment</p>
                     </div>
                 </div>
-                <div class="grid-item">
+                <div class="grid-item" data-location="seoul" data-tag="building">
                     <img src="./sources/IMG_6457.webp" alt="Portfolio Image 4" loading="lazy">
                     <div class="hover-overlay">
                         <h3>Project Name</h3>
                         <p>Artist Name</p>
-                        <p>Location</p>
-                        <p>Date</p>
+                        <p>Seoul</p>
+                        <p>Building</p>
                     </div>
                 </div>
-                <div class="grid-item">
+                <div class="grid-item" data-location="busan" data-tag="apartment">
                     <img src="./sources/IMG_6615.webp" alt="Portfolio Image 5" loading="lazy">
                     <div class="hover-overlay">
                         <h3>Project Name</h3>
                         <p>Artist Name</p>
-                        <p>Location</p>
-                        <p>Date</p>
+                        <p>Busan</p>
+                        <p>Apartment</p>
                     </div>
                 </div>
             </div>
@@ -85,6 +101,43 @@
         document.querySelector('.menu-toggle').addEventListener('click', function() {
             document.querySelector('.nav-links').classList.toggle('active');
             this.classList.toggle('open');
+        });
+
+        // Filtering logic
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const gridItems = document.querySelectorAll('.grid-item');
+        
+        let activeLocation = 'all';
+        let activeTag = 'all';
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.getAttribute('data-type');
+                const filterValue = btn.getAttribute('data-filter');
+                
+                // Update active state for buttons in the same group
+                document.querySelectorAll(`.filter-btn[data-type="${type}"]`).forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Update active filter values
+                if (type === 'location') activeLocation = filterValue;
+                if (type === 'tag') activeTag = filterValue;
+                
+                // Filter the grid items
+                gridItems.forEach(item => {
+                    const itemLocation = item.getAttribute('data-location');
+                    const itemTag = item.getAttribute('data-tag');
+                    
+                    const locationMatch = activeLocation === 'all' || itemLocation === activeLocation;
+                    const tagMatch = activeTag === 'all' || itemTag === activeTag;
+                    
+                    if (locationMatch && tagMatch) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+            });
         });
     </script>
 </body>
