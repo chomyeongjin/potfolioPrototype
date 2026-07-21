@@ -99,6 +99,7 @@
     <script>
         // Simple menu toggle for mobile
         document.querySelector('.menu-toggle').addEventListener('click', function () {
+            document.body.classList.toggle('menu-open');
             document.querySelector('.nav-links').classList.toggle('active');
             this.classList.toggle('open');
         });
