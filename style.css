@@ -126,9 +126,13 @@ a {
 .main-content {
     padding: calc(var(--spacing) * 4) var(--spacing) var(--spacing) var(--spacing);
     min-height: 100vh;
+    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-/* Filter Section */
+body:has(.nav-links.active) .main-content {
+    transform: translateY(130px);
+}
+
 .filter-section {
     display: flex;
     flex-direction: column;
@@ -180,6 +184,63 @@ a {
     border-color: var(--text-color);
 }
 
+/* Dropdown Filters */
+.dropdown-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.dropdown-toggle {
+    background: transparent;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.dropdown-toggle span {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-toggle.active span {
+    transform: rotate(180deg);
+}
+
+.dropdown-content {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.dropdown-content.active {
+    display: flex;
+}
+
+/* Override filter btn styles for dropdown */
+.dropdown-content .filter-btn {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.dropdown-content .filter-btn:hover {
+    border-color: var(--text-color);
+    color: var(--text-color);
+    background-color: transparent;
+}
+
 .grid-item.hidden {
     display: none !important;
 }
@@ -187,8 +248,9 @@ a {
 /* Uniform Grid Layout */
 .uniform-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.25rem;
+    align-items: start;
     max-width: 1600px;
     margin: 0 auto;
 }
@@ -211,8 +273,7 @@ a {
 /* Uniform Grid Image specific */
 .uniform-grid .grid-item img {
     width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
+    height: auto;
     display: block;
     transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.3s ease;
 }
@@ -261,7 +322,7 @@ a {
 
 .hover-overlay h3 {
     margin-bottom: 0.5rem;
-    font-size: 1.25rem;
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--text-color);
     transform: translateY(15px);
@@ -269,7 +330,7 @@ a {
 }
 
 .hover-overlay p {
-    font-size: 0.9rem;
+    font-size: 0.65rem;
     color: var(--accent-color);
     transform: translateY(15px);
     transition: transform 0.4s ease;
@@ -286,8 +347,8 @@ a {
 */
 @media (max-width: 1024px) {
     .uniform-grid {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
     }
 
     .masonry-grid {
@@ -317,12 +378,12 @@ a {
     }
 
     .hover-overlay h3 {
-        font-size: 1rem;
+        font-size: 0.7rem;
         margin-bottom: 0.25rem;
     }
 
     .hover-overlay p {
-        font-size: 0.75rem;
+        font-size: 0.55rem;
     }
 
     .grid-item {
@@ -340,17 +401,35 @@ a {
 }
 
 .project-info {
-    display: flex;
-    justify-content: flex-start;
-    gap: 4rem;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
+    text-align: center;
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--accent-color);
+    
+    /* Horizontally scrollable */
+    overflow-x: auto;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+/* Custom Scrollbar for project info */
+.project-info::-webkit-scrollbar {
+    height: 4px;
+}
+.project-info::-webkit-scrollbar-track {
+    background: transparent;
+}
+.project-info::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+.project-info::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .project-tags {
@@ -371,9 +450,11 @@ a {
 }
 
 .info-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.35rem;
+    margin: 0 0.25rem; /* Replaces the flex gap */
 }
 
 .info-label {
