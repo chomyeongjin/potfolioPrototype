@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=5">
 </head>
-
 <body>
     <header class="header">
         <h1 class="logo"><a href="index.html">PORTFOLIO</a></h1>
-
+        <h2 class="page-title">Summer Breeze</h2>
         <nav class="nav">
             <button class="menu-toggle" aria-label="Toggle Menu">
                 <span></span>
@@ -28,6 +26,20 @@
     </header>
 
     <main class="main-content project-detail">
+        <div class="project-info">
+            <div class="info-row">
+                <span class="info-label">Artist</span>
+                <span class="info-value">Artist Name</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Location</span>
+                <span class="info-value">Seoul</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Date</span>
+                <span class="info-value">2026. 07</span>
+            </div>
+        </div>
         <div class="carousel-container">
             <button class="carousel-btn prev-btn" aria-label="Previous image">&#10094;</button>
             <div class="carousel-track-container">
@@ -45,27 +57,7 @@
             </div>
             <button class="carousel-btn next-btn" aria-label="Next image">&#10095;</button>
         </div>
-
-        <div class="project-info">
-            <div class="info-row">
-                <span class="info-label">Project:</span>
-                <span class="info-value">Summer Breeze Summer Breeze Summer Breeze Summer Breeze Summer Breeze Summer
-                    Breeze Summer Breeze Summer Breeze Summer Breeze Summer Breeze.</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Architect:</span>
-                <span class="info-value">Architect Name,</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Place:</span>
-                <span class="info-value">Seoul,</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Year:</span>
-                <span class="info-value">2026</span>
-            </div>
-        </div>
-
+        
         <div class="project-tags">
             <span class="tag">#Apartment</span>
             <span class="tag">#Architecture</span>
@@ -75,7 +67,8 @@
 
     <script>
         // Menu toggle
-        document.querySelector('.menu-toggle').addEventListener('click', function () {
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('menu-open');
             document.querySelector('.nav-links').classList.toggle('active');
             this.classList.toggle('open');
         });
@@ -110,7 +103,7 @@
             }
             updateSlidePosition();
         });
-
+        
         // Ensure accurate position on resize
         window.addEventListener('resize', () => {
             // slightly delay to ensure width is recalculated
@@ -118,5 +111,4 @@
         });
     </script>
 </body>
-
 </html>

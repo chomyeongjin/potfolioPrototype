@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,11 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=6">
 </head>
-
 <body>
     <header class="header">
         <h1 class="logo"><a href="index.html">PORTFOLIO</a></h1>
-
+        <h2 class="page-title">Works</h2>
         <nav class="nav">
             <button class="menu-toggle" aria-label="Toggle Menu">
                 <span></span>
@@ -32,39 +30,18 @@
 
     <main class="main-content">
         <section class="filter-section">
-            <div class="filter-group location-filters dropdown-group">
-                <button class="dropdown-toggle" aria-expanded="false">Place: All <span>&#9662;</span></button>
-                <div class="dropdown-content">
-                    <button class="filter-btn active" data-type="place" data-filter="all">All</button>
-                    <button class="filter-btn" data-type="place" data-filter="seoul">Seoul</button>
-                    <button class="filter-btn" data-type="place" data-filter="busan">Busan</button>
-                    <button class="filter-btn" data-type="place" data-filter="bundang">Bundang</button>
-                    <button class="filter-btn" data-type="place" data-filter="jeju">Jeju</button>
-                    <button class="filter-btn" data-type="place" data-filter="incheon">Incheon</button>
-                    <button class="filter-btn" data-type="place" data-filter="daegu">Daegu</button>
-                    <button class="filter-btn" data-type="place" data-filter="daejeon">Daejeon</button>
-                    <button class="filter-btn" data-type="place" data-filter="gwangju">Gwangju</button>
-                    <button class="filter-btn" data-type="place" data-filter="ulsan">Ulsan</button>
-                    <button class="filter-btn" data-type="place" data-filter="suwon">Suwon</button>
-                    <button class="filter-btn" data-type="place" data-filter="goyang">Goyang</button>
-                    <button class="filter-btn" data-type="place" data-filter="yongin">Yongin</button>
-                    <button class="filter-btn" data-type="place" data-filter="changwon">Changwon</button>
-                    <button class="filter-btn" data-type="place" data-filter="cheongju">Cheongju</button>
-                    <button class="filter-btn" data-type="place" data-filter="jeonju">Jeonju</button>
-                    <button class="filter-btn" data-type="place" data-filter="cheonan">Cheonan</button>
-                    <button class="filter-btn" data-type="place" data-filter="namyangju">Namyangju</button>
-                    <button class="filter-btn" data-type="place" data-filter="asan">Asan</button>
-                    <button class="filter-btn" data-type="place" data-filter="jinju">Jinju</button>
-                    <button class="filter-btn" data-type="place" data-filter="gumi">Gumi</button>
-                </div>
+            <div class="filter-group location-filters">
+                <span class="filter-label">Location:</span>
+                <button class="filter-btn active" data-type="location" data-filter="all">All</button>
+                <button class="filter-btn" data-type="location" data-filter="seoul">Seoul</button>
+                <button class="filter-btn" data-type="location" data-filter="busan">Busan</button>
+                <button class="filter-btn" data-type="location" data-filter="bundang">Bundang</button>
             </div>
-            <div class="filter-group tag-filters dropdown-group">
-                <button class="dropdown-toggle" aria-expanded="false">Tag: All <span>&#9662;</span></button>
-                <div class="dropdown-content">
-                    <button class="filter-btn active" data-type="tag" data-filter="all">All</button>
-                    <button class="filter-btn" data-type="tag" data-filter="apartment">Apartment</button>
-                    <button class="filter-btn" data-type="tag" data-filter="building">Building</button>
-                </div>
+            <div class="filter-group tag-filters">
+                <span class="filter-label">Tag:</span>
+                <button class="filter-btn active" data-type="tag" data-filter="all">All</button>
+                <button class="filter-btn" data-type="tag" data-filter="apartment">Apartment</button>
+                <button class="filter-btn" data-type="tag" data-filter="building">Building</button>
             </div>
         </section>
 
@@ -121,54 +98,16 @@
 
     <script>
         // Simple menu toggle for mobile
-        document.querySelector('.menu-toggle').addEventListener('click', function () {
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('menu-open');
             document.querySelector('.nav-links').classList.toggle('active');
             this.classList.toggle('open');
         });
 
-        // Dropdown logic
-        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-
-        dropdownToggles.forEach(toggle => {
-            toggle.addEventListener('click', function (e) {
-                e.stopPropagation();
-
-                // Close other dropdowns
-                dropdownToggles.forEach(otherToggle => {
-                    if (otherToggle !== this) {
-                        otherToggle.classList.remove('active');
-                        otherToggle.nextElementSibling.classList.remove('active');
-                        otherToggle.setAttribute('aria-expanded', 'false');
-                    }
-                });
-
-                // Toggle current dropdown
-                const isActive = this.classList.contains('active');
-                this.classList.toggle('active', !isActive);
-                this.nextElementSibling.classList.toggle('active', !isActive);
-                this.setAttribute('aria-expanded', !isActive);
-            });
-        });
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', () => {
-            dropdownToggles.forEach(toggle => {
-                toggle.classList.remove('active');
-                toggle.nextElementSibling.classList.remove('active');
-                toggle.setAttribute('aria-expanded', 'false');
-            });
-        });
-
-        // Prevent closing when clicking inside dropdown content
-        document.querySelectorAll('.dropdown-content').forEach(content => {
-            content.addEventListener('click', function (e) {
-                e.stopPropagation();
-            });
-        });
-
+        // Filtering logic
         const filterBtns = document.querySelectorAll('.filter-btn');
         const gridItems = document.querySelectorAll('.grid-item');
-
+        
         let activeLocation = 'all';
         let activeTag = 'all';
 
@@ -176,36 +115,23 @@
             btn.addEventListener('click', () => {
                 const type = btn.getAttribute('data-type');
                 const filterValue = btn.getAttribute('data-filter');
-
+                
                 // Update active state for buttons in the same group
                 document.querySelectorAll(`.filter-btn[data-type="${type}"]`).forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-
-                // Update dropdown toggle text
-                const dropdownToggle = btn.closest('.dropdown-group').querySelector('.dropdown-toggle');
-                const label = type === 'place' ? 'place' : 'Tag';
-                // Capitalize first letter of filter value for display
-                const displayValue = filterValue === 'all' ? 'All' :
-                    btn.textContent;
-                dropdownToggle.innerHTML = `${label}: ${displayValue} <span>&#9662;</span>`;
-
-                // Close dropdown
-                dropdownToggle.classList.remove('active');
-                dropdownToggle.nextElementSibling.classList.remove('active');
-                dropdownToggle.setAttribute('aria-expanded', 'false');
-
+                
                 // Update active filter values
-                if (type === 'place') activeLocation = filterValue;
+                if (type === 'location') activeLocation = filterValue;
                 if (type === 'tag') activeTag = filterValue;
-
+                
                 // Filter the grid items
                 gridItems.forEach(item => {
                     const itemLocation = item.getAttribute('data-location');
                     const itemTag = item.getAttribute('data-tag');
-
+                    
                     const locationMatch = activeLocation === 'all' || itemLocation === activeLocation;
                     const tagMatch = activeTag === 'all' || itemTag === activeTag;
-
+                    
                     if (locationMatch && tagMatch) {
                         item.classList.remove('hidden');
                     } else {
@@ -216,5 +142,4 @@
         });
     </script>
 </body>
-
 </html>
