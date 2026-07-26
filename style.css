@@ -220,6 +220,14 @@ body:has(.nav-links.active) .main-content {
     background-color: transparent;
 }
 
+.dropdown-content .filter-btn.active,
+.dropdown-content .filter-btn.active:hover {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    border-color: var(--text-color);
+    font-weight: 600;
+}
+
 .grid-item.hidden {
     display: none !important;
 }

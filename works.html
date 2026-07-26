@@ -73,7 +73,7 @@
                     <img src="./sources/DJI_0198.webp" alt="Portfolio Image 1" loading="lazy">
                     <div class="hover-overlay">
                         <h3>Project Name</h3>
-                        <p>Artist Name</p>
+                        <p>Architect Name</p>
                         <p>Seoul</p>
                         <p>Apartment</p>
                     </div>
@@ -82,7 +82,7 @@
                     <img src="./sources/IMG_0219.webp" alt="Portfolio Image 2" loading="lazy">
                     <div class="hover-overlay">
                         <h3>Project Name</h3>
-                        <p>Artist Name</p>
+                        <p>Architect Name</p>
                         <p>Busan</p>
                         <p>Building</p>
                     </div>
@@ -91,7 +91,7 @@
                     <img src="./sources/IMG_0300.webp" alt="Portfolio Image 3" loading="lazy">
                     <div class="hover-overlay">
                         <h3>Project Name</h3>
-                        <p>Artist Name</p>
+                        <p>Architect Name</p>
                         <p>Bundang</p>
                         <p>Apartment</p>
                     </div>
@@ -100,7 +100,7 @@
                     <img src="./sources/IMG_6457.webp" alt="Portfolio Image 4" loading="lazy">
                     <div class="hover-overlay">
                         <h3>Project Name</h3>
-                        <p>Artist Name</p>
+                        <p>Architect Name</p>
                         <p>Seoul</p>
                         <p>Building</p>
                     </div>
@@ -109,7 +109,7 @@
                     <img src="./sources/IMG_6615.webp" alt="Portfolio Image 5" loading="lazy">
                     <div class="hover-overlay">
                         <h3>Project Name</h3>
-                        <p>Artist Name</p>
+                        <p>Architect Name</p>
                         <p>Busan</p>
                         <p>Apartment</p>
                     </div>
@@ -132,15 +132,6 @@
         dropdownToggles.forEach(toggle => {
             toggle.addEventListener('click', function (e) {
                 e.stopPropagation();
-
-                // Close other dropdowns
-                dropdownToggles.forEach(otherToggle => {
-                    if (otherToggle !== this) {
-                        otherToggle.classList.remove('active');
-                        otherToggle.nextElementSibling.classList.remove('active');
-                        otherToggle.setAttribute('aria-expanded', 'false');
-                    }
-                });
 
                 // Toggle current dropdown
                 const isActive = this.classList.contains('active');
