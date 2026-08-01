@@ -14,7 +14,7 @@
 
 <body>
     <header class="header">
-        <h1 class="logo"><a href="index.html">PORTFOLIO</a></h1>
+        <h1 class="logo"><a href="index.html">Project CHnF</a></h1>
         <nav class="nav">
             <button class="menu-toggle" aria-label="Toggle Menu">
                 <span></span>
@@ -161,33 +161,67 @@
         const gridItems = document.querySelectorAll('.grid-item');
 
         let activeLocation = 'all';
-        let activeTag = 'all';
+        let activeTags = new Set(['all']);
 
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const type = btn.getAttribute('data-type');
                 const filterValue = btn.getAttribute('data-filter');
-
-                // Update active state for buttons in the same group
-                document.querySelectorAll(`.filter-btn[data-type="${type}"]`).forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                // Update dropdown toggle text
                 const dropdownToggle = btn.closest('.dropdown-group').querySelector('.dropdown-toggle');
-                const label = type === 'location' ? 'Location' : 'Tag';
-                // Capitalize first letter of filter value for display
-                const displayValue = filterValue === 'all' ? 'All' :
-                    btn.textContent;
-                dropdownToggle.innerHTML = `${label}: ${displayValue} <span>&#9662;</span>`;
 
-                // Close dropdown
-                dropdownToggle.classList.remove('active');
-                dropdownToggle.nextElementSibling.classList.remove('active');
-                dropdownToggle.setAttribute('aria-expanded', 'false');
+                if (type === 'location') {
+                    // Single select logic for location
+                    document.querySelectorAll(`.filter-btn[data-type="location"]`).forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeLocation = filterValue;
 
-                // Update active filter values
-                if (type === 'location') activeLocation = filterValue;
-                if (type === 'tag') activeTag = filterValue;
+                    const displayValue = filterValue === 'all' ? 'All' : btn.textContent;
+                    dropdownToggle.innerHTML = `Place: ${displayValue} <span>&#9662;</span>`;
+
+                    // Close dropdown for location
+                    dropdownToggle.classList.remove('active');
+                    dropdownToggle.nextElementSibling.classList.remove('active');
+                    dropdownToggle.setAttribute('aria-expanded', 'false');
+                } else if (type === 'tag') {
+                    // Multi select logic for tags
+                    if (filterValue === 'all') {
+                        activeTags.clear();
+                        activeTags.add('all');
+                        document.querySelectorAll(`.filter-btn[data-type="tag"]`).forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    } else {
+                        activeTags.delete('all');
+                        document.querySelector(`.filter-btn[data-type="tag"][data-filter="all"]`).classList.remove('active');
+
+                        if (activeTags.has(filterValue)) {
+                            activeTags.delete(filterValue);
+                            btn.classList.remove('active');
+                        } else {
+                            activeTags.add(filterValue);
+                            btn.classList.add('active');
+                        }
+
+                        // Fallback to 'all' if no tags are selected
+                        if (activeTags.size === 0) {
+                            activeTags.add('all');
+                            document.querySelector(`.filter-btn[data-type="tag"][data-filter="all"]`).classList.add('active');
+                        }
+                    }
+
+                    // Update toggle text for multiple tags
+                    let displayValue = 'All';
+                    if (!activeTags.has('all')) {
+                        const activeBtns = Array.from(document.querySelectorAll(`.filter-btn[data-type="tag"].active`));
+                        if (activeBtns.length <= 2) {
+                            displayValue = activeBtns.map(b => b.textContent).join(', ');
+                        } else {
+                            displayValue = `${activeBtns.length} selected`;
+                        }
+                    }
+                    dropdownToggle.innerHTML = `Tag: ${displayValue} <span>&#9662;</span>`;
+
+                    // Do NOT close dropdown so user can select multiple
+                }
 
                 // Filter the grid items
                 gridItems.forEach(item => {
@@ -195,7 +229,7 @@
                     const itemTag = item.getAttribute('data-tag');
 
                     const locationMatch = activeLocation === 'all' || itemLocation === activeLocation;
-                    const tagMatch = activeTag === 'all' || itemTag === activeTag;
+                    const tagMatch = activeTags.has('all') || activeTags.has(itemTag);
 
                     if (locationMatch && tagMatch) {
                         item.classList.remove('hidden');

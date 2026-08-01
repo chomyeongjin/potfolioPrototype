@@ -11,7 +11,7 @@
 
 <body>
     <header class="header">
-        <h1 class="logo"><a href="index.html">PORTFOLIO</a></h1>
+        <h1 class="logo"><a href="index.html">Project CHnF</a></h1>
         <nav class="nav">
             <button class="menu-toggle" aria-label="Toggle Menu">
                 <span></span>
@@ -43,6 +43,9 @@
                 </ul>
             </div>
             <button class="carousel-btn next-btn" aria-label="Next image">&#10095;</button>
+            <div class="custom-scrollbar">
+                <div class="custom-scrollbar-thumb"></div>
+            </div>
         </div>
 
         <div class="project-info">
@@ -81,40 +84,89 @@
         });
 
         // Carousel logic
+        const trackContainer = document.querySelector('.carousel-track-container');
         const track = document.querySelector('.carousel-track');
+        const originalSlidesCount = track.children.length;
         const slides = Array.from(track.children);
         const nextButton = document.querySelector('.next-btn');
         const prevButton = document.querySelector('.prev-btn');
 
-        let currentSlideIndex = 0;
+        // Clone first and last slides for infinite looping
+        const firstClone = slides[0].cloneNode(true);
+        const lastClone = slides[slides.length - 1].cloneNode(true);
 
-        const updateSlidePosition = () => {
-            const slideWidth = slides[0].getBoundingClientRect().width;
-            track.style.transform = 'translateX(-' + slideWidth * currentSlideIndex + 'px)';
+        track.appendChild(firstClone);
+        track.insertBefore(lastClone, slides[0]);
+
+        // Setup Custom Scrollbar
+        const customScrollbarThumb = document.querySelector('.custom-scrollbar-thumb');
+        if (customScrollbarThumb) {
+            customScrollbarThumb.style.width = `${100 / originalSlidesCount}%`;
+        }
+
+        const updateCustomScrollbar = () => {
+            if (!customScrollbarThumb) return;
+            const slideWidth = trackContainer.offsetWidth;
+            if (slideWidth === 0) return;
+
+            // Calculate current exact index relative to original slides
+            let exactIndex = (trackContainer.scrollLeft / slideWidth) - 1;
+
+            // Wrap the index using modulo arithmetic for smooth looping representation
+            let mappedIndex = exactIndex % originalSlidesCount;
+            if (mappedIndex < 0) mappedIndex += originalSlidesCount;
+
+            // Transform thumb relative to its own width
+            customScrollbarThumb.style.transform = `translateX(${mappedIndex * 100}%)`;
         };
 
-        nextButton.addEventListener('click', () => {
-            if (currentSlideIndex < slides.length - 1) {
-                currentSlideIndex++;
-            } else {
-                currentSlideIndex = 0; // Loop back to first
+        // Setup initial position to hide the clones from initial view
+        const setInitialPosition = () => {
+            trackContainer.style.scrollSnapType = 'none';
+            trackContainer.scrollLeft = trackContainer.offsetWidth;
+            setTimeout(() => {
+                trackContainer.style.scrollSnapType = 'x mandatory';
+            }, 10);
+            updateCustomScrollbar();
+        };
+
+        // Call immediately and also on window load to ensure accurate width
+        setInitialPosition();
+        window.addEventListener('load', setInitialPosition);
+
+        trackContainer.addEventListener('scroll', () => {
+            updateCustomScrollbar();
+
+            const maxScrollLeft = trackContainer.scrollWidth - trackContainer.offsetWidth;
+
+            // Reached the clone of the last slide (at the beginning)
+            if (trackContainer.scrollLeft <= 0) {
+                trackContainer.style.scrollSnapType = 'none';
+                trackContainer.scrollLeft = trackContainer.offsetWidth * originalSlidesCount;
+                setTimeout(() => {
+                    trackContainer.style.scrollSnapType = 'x mandatory';
+                }, 0);
             }
-            updateSlidePosition();
+            // Reached the clone of the first slide (at the end)
+            else if (trackContainer.scrollLeft >= maxScrollLeft - 1) {
+                trackContainer.style.scrollSnapType = 'none';
+                trackContainer.scrollLeft = trackContainer.offsetWidth;
+                setTimeout(() => {
+                    trackContainer.style.scrollSnapType = 'x mandatory';
+                }, 0);
+            }
+        });
+
+        window.addEventListener('resize', updateCustomScrollbar);
+
+        nextButton.addEventListener('click', () => {
+            const slideWidth = trackContainer.offsetWidth;
+            trackContainer.scrollBy({ left: slideWidth, behavior: 'smooth' });
         });
 
         prevButton.addEventListener('click', () => {
-            if (currentSlideIndex > 0) {
-                currentSlideIndex--;
-            } else {
-                currentSlideIndex = slides.length - 1; // Loop back to last
-            }
-            updateSlidePosition();
-        });
-
-        // Ensure accurate position on resize
-        window.addEventListener('resize', () => {
-            // slightly delay to ensure width is recalculated
-            setTimeout(updateSlidePosition, 50);
+            const slideWidth = trackContainer.offsetWidth;
+            trackContainer.scrollBy({ left: -slideWidth, behavior: 'smooth' });
         });
     </script>
 </body>
