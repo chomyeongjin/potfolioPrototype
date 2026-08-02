@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO - Project Detail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=5">
+</head>
+
+<body>
+    <header class="header">
+        <h1 class="logo"><a href="index.html"><img src="./sources/Logo.png" alt="Project CHnF"></a></h1>
+        <nav class="nav">
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="works.html" style="font-weight: 600; color: var(--text-color);">Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content project-detail">
+        <div class="carousel-container">
+            <button class="carousel-btn prev-btn" aria-label="Previous image">&#10094;</button>
+            <div class="carousel-track-container">
+                <ul class="carousel-track">
+                    <li class="carousel-slide">
+                        <img src="./sources/김효영_하늘내린산채세상휴게소/IMG_6067.webp" alt="Project Image 1">
+                    </li>
+                    <li class="carousel-slide">
+                        <img src="./sources/김효영_하늘내린산채세상휴게소/IMG_6133.webp" alt="Project Image 2">
+                    </li>
+                    <li class="carousel-slide">
+                        <img src="./sources/김효영_하늘내린산채세상휴게소/IMG_6150.webp" alt="Project Image 3">
+                    </li>
+                    <li class="carousel-slide">
+                        <img src="./sources/김효영_하늘내린산채세상휴게소/IMG_9096.webp" alt="Project Image 4">
+                    </li>
+                    <li class="carousel-slide">
+                        <img src="./sources/김효영_하늘내린산채세상휴게소/IMG_9276.webp" alt="Project Image 5">
+                    </li>
+                    <li class="carousel-slide">
+                        <img src="./sources/김효영_하늘내린산채세상휴게소/IMG_9590.webp" alt="Project Image 6">
+                    </li>
+                    <li class="carousel-slide">
+                        <img src="./sources/김효영_하늘내린산채세상휴게소/IMG_9768.webp" alt="Project Image 7">
+                    </li>
+                    <li class="carousel-slide">
+                        <img src="./sources/김효영_하늘내린산채세상휴게소/IMG_9782-1.webp" alt="Project Image 8">
+                    </li>
+                </ul>
+            </div>
+            <button class="carousel-btn next-btn" aria-label="Next image">&#10095;</button>
+            <div class="custom-scrollbar">
+                <div class="custom-scrollbar-thumb"></div>
+            </div>
+        </div>
+
+        <div class="project-info">
+            <div class="info-row">
+                <span class="info-label">Project:</span>
+                <span class="info-value">하늘내린산채세상휴게소, </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Architect:</span>
+                <span class="info-value">김효영, </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Place:</span>
+                <span class="info-value">TBD, </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Year:</span>
+                <span class="info-value">TBD</span>
+            </div>
+        </div>
+
+        <div class="project-tags">
+            <span class="tag">#쉼</span>
+            <span class="tag">#계단</span>
+            <span class="tag">#독서</span>
+            <span class="tag">#휴게소</span>
+            <span class="tag">#스마트쉼터</span>
+            <span class="tag">#바람</span>
+            <span class="tag">#강</span>
+            <span class="tag">#자연</span>
+            <span class="tag">#풍경</span>
+        </div>
+    </main>
+
+    <script>
+        // Menu toggle
+        document.querySelector('.menu-toggle').addEventListener('click', function () {
+            document.body.classList.toggle('menu-open');
+            document.querySelector('.nav-links').classList.toggle('active');
+            this.classList.toggle('open');
+        });
+
+        // Carousel logic
+        const trackContainer = document.querySelector('.carousel-track-container');
+        const track = document.querySelector('.carousel-track');
+        const originalSlidesCount = track.children.length;
+        const slides = Array.from(track.children);
+        const nextButton = document.querySelector('.next-btn');
+        const prevButton = document.querySelector('.prev-btn');
+
+        // Clone first and last slides for infinite looping
+        const firstClone = slides[0].cloneNode(true);
+        const lastClone = slides[slides.length - 1].cloneNode(true);
+
+        track.appendChild(firstClone);
+        track.insertBefore(lastClone, slides[0]);
+
+        // Setup Custom Scrollbar
+        const customScrollbarThumb = document.querySelector('.custom-scrollbar-thumb');
+        if (customScrollbarThumb) {
+            customScrollbarThumb.style.width = `${100 / originalSlidesCount}%`;
+        }
+
+        const updateCustomScrollbar = () => {
+            if (!customScrollbarThumb) return;
+            const slideWidth = trackContainer.offsetWidth;
+            if (slideWidth === 0) return;
+
+            // Calculate current exact index relative to original slides
+            let exactIndex = (trackContainer.scrollLeft / slideWidth) - 1;
+
+            // Wrap the index using modulo arithmetic for smooth looping representation
+            let mappedIndex = exactIndex % originalSlidesCount;
+            if (mappedIndex < 0) mappedIndex += originalSlidesCount;
+
+            // Transform thumb relative to its own width
+            customScrollbarThumb.style.transform = `translateX(${mappedIndex * 100}%)`;
+        };
+
+        // Setup initial position to hide the clones from initial view
+        const setInitialPosition = () => {
+            trackContainer.style.scrollSnapType = 'none';
+            trackContainer.scrollLeft = trackContainer.offsetWidth;
+            setTimeout(() => {
+                trackContainer.style.scrollSnapType = 'x mandatory';
+            }, 10);
+            updateCustomScrollbar();
+        };
+
+        // Call immediately and also on window load to ensure accurate width
+        setInitialPosition();
+        window.addEventListener('load', setInitialPosition);
+
+        trackContainer.addEventListener('scroll', () => {
+            updateCustomScrollbar();
+
+            const maxScrollLeft = trackContainer.scrollWidth - trackContainer.offsetWidth;
+
+            // Reached the clone of the last slide (at the beginning)
+            if (trackContainer.scrollLeft <= 0) {
+                trackContainer.style.scrollSnapType = 'none';
+                trackContainer.scrollLeft = trackContainer.offsetWidth * originalSlidesCount;
+                setTimeout(() => {
+                    trackContainer.style.scrollSnapType = 'x mandatory';
+                }, 0);
+            }
+            // Reached the clone of the first slide (at the end)
+            else if (trackContainer.scrollLeft >= maxScrollLeft - 1) {
+                trackContainer.style.scrollSnapType = 'none';
+                trackContainer.scrollLeft = trackContainer.offsetWidth;
+                setTimeout(() => {
+                    trackContainer.style.scrollSnapType = 'x mandatory';
+                }, 0);
+            }
+        });
+
+        window.addEventListener('resize', updateCustomScrollbar);
+
+        nextButton.addEventListener('click', () => {
+            const slideWidth = trackContainer.offsetWidth;
+            trackContainer.scrollBy({ left: slideWidth, behavior: 'smooth' });
+        });
+
+        prevButton.addEventListener('click', () => {
+            const slideWidth = trackContainer.offsetWidth;
+            trackContainer.scrollBy({ left: -slideWidth, behavior: 'smooth' });
+        });
+    </script>
+</body>
+
+</html>

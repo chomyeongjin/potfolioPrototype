@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO - About</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+    <header class="header">
+        <h1 class="logo"><a href="index.html"><img src="./sources/Logo.png" alt="Project CHnF"></a></h1>
+        <nav class="nav">
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="works.html">Works</a></li>
+                <li><a href="about.html" style="font-weight: 600; color: var(--text-color);">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content about-page">
+        <div class="about-container">
+            <h2 class="about-title">진 효 숙 <span class="en-name">Hyosook Chin</span></h2>
+            <div class="about-content">
+                <p>건축사진가 진효숙은 도시와 집, 그리고 그 공간에 깃든 깊고 넓은 시간의 이야기를 담는 사진가입니다. 신문방송학을 전공하고 사진에 대한 깊은 관심으로 한국광고사진연구원에서 사진교육을 수료한 후 건축사진으로 방향을 정하고 이후 건축잡지등을 거쳐 프리랜서 건축사진가로서 작업을 하고 있습니다. 건축비전공자로서 건축을 사진으로 담아내는 방식은 물리적인 건축의 공간에서 중요한 목적인 그 안에 담기는 삶의 온기와 서사를 프레임안에 온전히 구현하고자 합니다.</p>
+                
+                <p>주요 참여 도서로는 우리나라 초기 아파트를 연구한 《대한민국 아파트 발굴사》(장림종·박진희 공저), 집을 짓고 가꾸는 3년여의 여정을 담아낸 《제가 살고 싶은 집은》(송승훈·이일훈 저)의 사진을 찍었습니다.</p>
+                
+                <p>2014년 개인전 〈PRESENCING〉(spacewillingNdealing)을 시작으로 〈공간기억 : 건축을 향한 사진의 다섯 가지 시선〉(김중업건축박물관), 〈공간의 온도〉(ARTE22) 등 다수의 기획 전시에 참여하며 공간에 시간이 쌓이는 의미를 추구하는 작업을 구축해 왔습니다.</p>
+                
+                <p>특히 소록도 한센병 박물관 개관 기획전인 〈sorok, 2016-1916〉을 통해 지금도 소록도에서 살아가는 사람들의 예전의 흔적과 다시 쌓이는 시간을 사진으로 기록하는 작업을 수행했습니다. 반포 주공아파트를 비롯한 우리나라의 사라져 가는 오래된 건축물에의 기억을 기록하는 사진가로서 작업을 인정받아 2022년 국토교통부 장관상을 수상했습니다.</p>
+                
+                <p>《이상건축》, 《건축문화》, 《POAR》 등의 전속 사진가를 거쳐, 현재 건축매체 격월간지 《WIDE》와 월간 《SPACE》의 전속사진가이자, 프리랜서 건축사진가로서 다수의 건축가들의 작업을 촬영하며 한국 건축의 오늘을 기록하고 있습니다.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', function () {
+            document.body.classList.toggle('menu-open');
+            document.querySelector('.nav-links').classList.toggle('active');
+            this.classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

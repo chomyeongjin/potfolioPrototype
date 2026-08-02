@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO - Contact</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=8">
+</head>
+<body>
+    <header class="header">
+        <h1 class="logo"><a href="index.html"><img src="./sources/Logo.png" alt="Project CHnF"></a></h1>
+        <nav class="nav">
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="works.html">Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html" style="font-weight: 600; color: var(--text-color);">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content about-page">
+        <div class="about-container">
+            <h2 class="about-title">Contact</h2>
+            <div class="about-content contact-content">
+                <div class="contact-block">
+                    <h4>address.</h4>
+                    <p>project CH&F<br>서울시 중구 을지로 114-10 상지빌딩 10층 1003호</p>
+                </div>
+                
+                <div class="contact-block">
+                    <h4>phone.</h4>
+                    <p>010.8815.8979</p>
+                </div>
+                
+                <div class="contact-block">
+                    <h4>E-mail.</h4>
+                    <p><a href="mailto:ttlmania1@gmail.com">ttlmania1@gmail.com</a></p>
+                </div>
+                
+                <div class="contact-block">
+                    <h4>Instagram.</h4>
+                    <p><a href="https://instagram.com/chinhyosook_official" target="_blank" rel="noopener noreferrer">@chinhyosook_official</a><br>
+                    <a href="https://instagram.com/projectchf" target="_blank" rel="noopener noreferrer">@projectchf</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', function () {
+            document.body.classList.toggle('menu-open');
+            document.querySelector('.nav-links').classList.toggle('active');
+            this.classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

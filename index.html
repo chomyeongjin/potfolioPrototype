@@ -14,7 +14,7 @@
 
 <body>
     <header class="header">
-        <h1 class="logo"><a href="index.html">Project CHnF</a></h1>
+        <h1 class="logo"><a href="index.html"><img src="./sources/Logo.png" alt="Project CHnF"></a></h1>
         <nav class="nav">
             <button class="menu-toggle" aria-label="Toggle Menu">
                 <span></span>
@@ -23,24 +23,26 @@
             </button>
             <ul class="nav-links">
                 <li><a href="works.html">Works</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
     </header>
 
-    <main class="main-content">
+    <main class="main-content"
+        style="padding-left: 0; padding-right: 0; padding-bottom: 0; padding-top: 16px; margin-top: 144px; position: relative; background-color: rgba(255, 140, 66, 0.65);">
+        <div class="photo-title">[ monthly <strong>Frame_APT</strong> ]</div>
         <section class="gallery carousel-container"
-            style="background-color: transparent; aspect-ratio: auto; height: 75vh; max-width: 1200px; margin: 0 auto;">
+            style="background-color: transparent; margin: 0; position: relative; height: calc(100vh - 196px);">
             <div class="carousel-track-container">
                 <ul class="carousel-track">
                     <li class="carousel-slide">
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
-                            <img src="./sources/DJI_0198.webp" alt="Portfolio Image 1" loading="lazy"
+                            <img src="./sources/monthly_frame/등마루아파트.webp" alt="등마루아파트" loading="lazy"
                                 style="height: 100%; width: 100%; object-fit: contain;">
                             <div class="hover-overlay">
-                                <h3>Summer Breeze</h3>
+                                <h3>등마루아파트</h3>
                                 <p>A gentle exploration of light and space in urban environments.</p>
                             </div>
                         </div>
@@ -48,10 +50,10 @@
                     <li class="carousel-slide">
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
-                            <img src="./sources/IMG_0219.webp" alt="Portfolio Image 2" loading="lazy"
+                            <img src="./sources/monthly_frame/반포아파트-1.webp" alt="반포아파트 1" loading="lazy"
                                 style="height: 100%; width: 100%; object-fit: contain;">
                             <div class="hover-overlay">
-                                <h3>Concrete Dreams</h3>
+                                <h3>반포아파트 1</h3>
                                 <p>Documenting the brutalist architecture across the city.</p>
                             </div>
                         </div>
@@ -59,10 +61,10 @@
                     <li class="carousel-slide">
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
-                            <img src="./sources/IMG_0300.webp" alt="Portfolio Image 3" loading="lazy"
+                            <img src="./sources/monthly_frame/반포아파트-2.webp" alt="반포아파트 2" loading="lazy"
                                 style="height: 100%; width: 100%; object-fit: contain;">
                             <div class="hover-overlay">
-                                <h3>Morning Light</h3>
+                                <h3>반포아파트 2</h3>
                                 <p>Capturing the ephemeral beauty of the golden hour.</p>
                             </div>
                         </div>
@@ -70,10 +72,10 @@
                     <li class="carousel-slide">
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
-                            <img src="./sources/IMG_6457.webp" alt="Portfolio Image 4" loading="lazy"
+                            <img src="./sources/monthly_frame/삼일아파트.webp" alt="삼일아파트" loading="lazy"
                                 style="height: 100%; width: 100%; object-fit: contain;">
                             <div class="hover-overlay">
-                                <h3>Silent Echoes</h3>
+                                <h3>삼일아파트</h3>
                                 <p>A visual narrative of abandoned spaces and forgotten memories.</p>
                             </div>
                         </div>
@@ -81,19 +83,28 @@
                     <li class="carousel-slide">
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
-                            <img src="./sources/IMG_6615.webp" alt="Portfolio Image 5" loading="lazy"
+                            <img src="./sources/monthly_frame/안양명학시장아파트.webp" alt="안양명학시장아파트" loading="lazy"
                                 style="height: 100%; width: 100%; object-fit: contain;">
                             <div class="hover-overlay">
-                                <h3>Modern Life</h3>
+                                <h3>안양명학시장아파트</h3>
                                 <p>Everyday moments framed through a minimalist lens.</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="carousel-slide">
+                        <div class="grid-item"
+                            style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
+                            <img src="./sources/monthly_frame/현대아현아파트.webp" alt="현대아현아파트" loading="lazy"
+                                style="height: 100%; width: 100%; object-fit: contain;">
+                            <div class="hover-overlay">
+                                <h3>현대아현아파트</h3>
+                                <p>A subtle interplay between architecture and everyday life.</p>
                             </div>
                         </div>
                     </li>
                 </ul>
             </div>
-            <div class="custom-scrollbar">
-                <div class="custom-scrollbar-thumb"></div>
-            </div>
+            <div class="carousel-indicators"></div>
         </section>
     </main>
 
@@ -118,27 +129,73 @@
         track.appendChild(firstClone);
         track.insertBefore(lastClone, slides[0]);
 
-        // Setup Custom Scrollbar
-        const customScrollbarThumb = document.querySelector('.custom-scrollbar-thumb');
-        if (customScrollbarThumb) {
-            customScrollbarThumb.style.width = `${100 / originalSlidesCount}%`;
+        // Setup Carousel Dots
+        const indicatorsContainer = document.querySelector('.carousel-indicators');
+        const dots = [];
+        for (let i = 0; i < originalSlidesCount; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('carousel-dot');
+            if (i === 0) dot.classList.add('active');
+
+            dot.addEventListener('click', () => {
+                const slideWidth = trackContainer.offsetWidth;
+                trackContainer.scrollTo({
+                    left: slideWidth * (i + 1),
+                    behavior: 'smooth'
+                });
+            });
+
+            if (indicatorsContainer) {
+                indicatorsContainer.appendChild(dot);
+            }
+            dots.push(dot);
         }
 
-        const updateCustomScrollbar = () => {
-            if (!customScrollbarThumb) return;
+        const updateDots = () => {
             const slideWidth = trackContainer.offsetWidth;
             if (slideWidth === 0) return;
 
-            // Calculate current exact index relative to original slides (0 to originalSlidesCount - 1)
-            let exactIndex = (trackContainer.scrollLeft / slideWidth) - 1;
-
-            // Wrap the index using modulo arithmetic for smooth looping representation
+            // Use Math.round to handle floating point inaccuracies during scroll
+            let exactIndex = Math.round((trackContainer.scrollLeft / slideWidth) - 1);
             let mappedIndex = exactIndex % originalSlidesCount;
             if (mappedIndex < 0) mappedIndex += originalSlidesCount;
+            // Handle -0
+            if (Object.is(mappedIndex, -0)) mappedIndex = 0;
 
-            // Transform thumb relative to its own width
-            customScrollbarThumb.style.transform = `translateX(${mappedIndex * 100}%)`;
+            dots.forEach((dot, index) => {
+                if (index === mappedIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+
+            // Adjust container height based on current image orientation
+            const currentSlideIndex = exactIndex + 1;
+            const currentSlide = Array.from(track.children)[currentSlideIndex];
+            const carouselContainer = document.querySelector('.carousel-container');
+            if (currentSlide && carouselContainer) {
+                const img = currentSlide.querySelector('img');
+                if (img && img.naturalWidth > 0) {
+                    if (img.naturalWidth >= img.naturalHeight) {
+                        // Landscape: Allow height to grow to fit 100% width image
+                        const newHeight = img.offsetHeight;
+                        if (newHeight > 0) {
+                            trackContainer.style.height = newHeight + 'px';
+                            carouselContainer.style.height = newHeight + 'px';
+                        }
+                    } else {
+                        // Portrait: Lock to default viewport constraint
+                        trackContainer.style.height = 'calc(100vh - 196px)';
+                        carouselContainer.style.height = 'calc(100vh - 196px)';
+                    }
+                }
+            }
         };
+
+        window.addEventListener('resize', () => {
+            setTimeout(updateDots, 100);
+        });
 
         // Setup initial position to hide the clones from initial view
         const setInitialPosition = () => {
@@ -147,15 +204,26 @@
             setTimeout(() => {
                 trackContainer.style.scrollSnapType = 'x mandatory';
             }, 10);
-            updateCustomScrollbar();
+            updateDots();
         };
 
-        // Call immediately and also on window load to ensure accurate width
-        setInitialPosition();
-        window.addEventListener('load', setInitialPosition);
+        window.addEventListener('load', () => {
+            // Apply landscape/portrait logic to all images
+            document.querySelectorAll('.carousel-slide img').forEach(img => {
+                if (img.naturalWidth >= img.naturalHeight) {
+                    img.style.width = '100%';
+                    img.style.height = 'auto';
+                } else {
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'contain';
+                }
+            });
+            setInitialPosition();
+        });
 
         trackContainer.addEventListener('scroll', () => {
-            updateCustomScrollbar();
+            updateDots();
 
             const maxScrollLeft = trackContainer.scrollWidth - trackContainer.offsetWidth;
 
