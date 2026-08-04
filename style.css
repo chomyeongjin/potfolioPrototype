@@ -373,10 +373,14 @@ body:has(.nav-links.active) .main-content {
 
 @media (max-width: 768px) {
     .header {
-        padding: 1.5rem;
+        padding: 1rem 1.5rem;
     }
 
-
+    .main-content, 
+    .project-detail, 
+    .about-page {
+        padding-top: calc(var(--spacing) * 5);
+    }
 
     .uniform-grid {
         grid-template-columns: repeat(3, 1fr);
