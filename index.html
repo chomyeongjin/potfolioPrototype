@@ -30,7 +30,7 @@
     </header>
 
     <main class="main-content"
-        style="padding-left: 0; padding-right: 0; padding-bottom: 0; padding-top: 16px; margin-top: 144px; position: relative; background-color: rgba(255, 140, 66, 0.65);">
+        style="padding-left: 0; padding-right: 0; padding-bottom: 0; padding-top: 16px; margin-top: 116px; position: relative; background-color: rgba(255, 140, 66, 0.65);">
         <div class="photo-title">[ monthly <strong>Frame_APT</strong> ]</div>
         <section class="gallery carousel-container"
             style="background-color: transparent; margin: 0; position: relative; height: calc(100vh - 196px);">
@@ -40,66 +40,48 @@
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
                             <img src="./sources/monthly_frame/등마루아파트.webp" alt="등마루아파트" loading="lazy"
-                                style="height: 100%; width: 100%; object-fit: contain;">
-                            <div class="hover-overlay">
-                                <h3>등마루아파트</h3>
-                                <p>A gentle exploration of light and space in urban environments.</p>
-                            </div>
+                                style="height: 95%; width: 95%; object-fit: contain;">
+
                         </div>
                     </li>
                     <li class="carousel-slide">
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
                             <img src="./sources/monthly_frame/반포아파트-1.webp" alt="반포아파트 1" loading="lazy"
-                                style="height: 100%; width: 100%; object-fit: contain;">
-                            <div class="hover-overlay">
-                                <h3>반포아파트 1</h3>
-                                <p>Documenting the brutalist architecture across the city.</p>
-                            </div>
+                                style="height: 95%; width: 95%; object-fit: contain;">
+
                         </div>
                     </li>
                     <li class="carousel-slide">
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
                             <img src="./sources/monthly_frame/반포아파트-2.webp" alt="반포아파트 2" loading="lazy"
-                                style="height: 100%; width: 100%; object-fit: contain;">
-                            <div class="hover-overlay">
-                                <h3>반포아파트 2</h3>
-                                <p>Capturing the ephemeral beauty of the golden hour.</p>
-                            </div>
+                                style="height: 95%; width: 95%; object-fit: contain;">
+
                         </div>
                     </li>
                     <li class="carousel-slide">
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
                             <img src="./sources/monthly_frame/삼일아파트.webp" alt="삼일아파트" loading="lazy"
-                                style="height: 100%; width: 100%; object-fit: contain;">
-                            <div class="hover-overlay">
-                                <h3>삼일아파트</h3>
-                                <p>A visual narrative of abandoned spaces and forgotten memories.</p>
-                            </div>
+                                style="height: 95%; width: 95%; object-fit: contain;">
+
                         </div>
                     </li>
                     <li class="carousel-slide">
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
                             <img src="./sources/monthly_frame/안양명학시장아파트.webp" alt="안양명학시장아파트" loading="lazy"
-                                style="height: 100%; width: 100%; object-fit: contain;">
-                            <div class="hover-overlay">
-                                <h3>안양명학시장아파트</h3>
-                                <p>Everyday moments framed through a minimalist lens.</p>
-                            </div>
+                                style="height: 95%; width: 95%; object-fit: contain;">
+
                         </div>
                     </li>
                     <li class="carousel-slide">
                         <div class="grid-item"
                             style="margin-bottom: 0; height: 100%; display: flex; justify-content: center; align-items: center;">
                             <img src="./sources/monthly_frame/현대아현아파트.webp" alt="현대아현아파트" loading="lazy"
-                                style="height: 100%; width: 100%; object-fit: contain;">
-                            <div class="hover-overlay">
-                                <h3>현대아현아파트</h3>
-                                <p>A subtle interplay between architecture and everyday life.</p>
-                            </div>
+                                style="height: 95%; width: 95%; object-fit: contain;">
+
                         </div>
                     </li>
                 </ul>
@@ -170,27 +152,7 @@
                 }
             });
 
-            // Adjust container height based on current image orientation
-            const currentSlideIndex = exactIndex + 1;
-            const currentSlide = Array.from(track.children)[currentSlideIndex];
-            const carouselContainer = document.querySelector('.carousel-container');
-            if (currentSlide && carouselContainer) {
-                const img = currentSlide.querySelector('img');
-                if (img && img.naturalWidth > 0) {
-                    if (img.naturalWidth >= img.naturalHeight) {
-                        // Landscape: Allow height to grow to fit 100% width image
-                        const newHeight = img.offsetHeight;
-                        if (newHeight > 0) {
-                            trackContainer.style.height = newHeight + 'px';
-                            carouselContainer.style.height = newHeight + 'px';
-                        }
-                    } else {
-                        // Portrait: Lock to default viewport constraint
-                        trackContainer.style.height = 'calc(100vh - 196px)';
-                        carouselContainer.style.height = 'calc(100vh - 196px)';
-                    }
-                }
-            }
+            // Container height is fixed for a uniform layout with margins.
         };
 
         window.addEventListener('resize', () => {
@@ -208,17 +170,7 @@
         };
 
         window.addEventListener('load', () => {
-            // Apply landscape/portrait logic to all images
-            document.querySelectorAll('.carousel-slide img').forEach(img => {
-                if (img.naturalWidth >= img.naturalHeight) {
-                    img.style.width = '100%';
-                    img.style.height = 'auto';
-                } else {
-                    img.style.width = '100%';
-                    img.style.height = '100%';
-                    img.style.objectFit = 'contain';
-                }
-            });
+            // Images now use consistent sizing (85%) to maintain margins
             setInitialPosition();
         });
 
@@ -254,6 +206,10 @@
             }
         });
     </script>
+
+    <footer class="site-footer">
+        &copy; 2026 Myeongjin. All rights reserved.
+    </footer>
 </body>
 
 </html>

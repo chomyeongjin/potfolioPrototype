@@ -28,7 +28,7 @@
 
     <main class="main-content project-detail">
         <div class="carousel-container">
-            <button class="carousel-btn prev-btn" aria-label="Previous image">&#10094;</button>
+
             <div class="carousel-track-container">
                 <ul class="carousel-track">
                     <li class="carousel-slide">
@@ -57,10 +57,8 @@
                     </li>
                 </ul>
             </div>
-            <button class="carousel-btn next-btn" aria-label="Next image">&#10095;</button>
-            <div class="custom-scrollbar">
-                <div class="custom-scrollbar-thumb"></div>
-            </div>
+
+            <div class="carousel-indicators"></div>
         </div>
 
         <div class="project-info">
@@ -74,11 +72,11 @@
             </div>
             <div class="info-row">
                 <span class="info-label">Place:</span>
-                <span class="info-value">TBD, </span>
+                <span class="info-value">인제 / 강원도, </span>
             </div>
             <div class="info-row">
                 <span class="info-label">Year:</span>
-                <span class="info-value">TBD</span>
+                <span class="info-value">2022</span>
             </div>
         </div>
 
@@ -108,8 +106,6 @@
         const track = document.querySelector('.carousel-track');
         const originalSlidesCount = track.children.length;
         const slides = Array.from(track.children);
-        const nextButton = document.querySelector('.next-btn');
-        const prevButton = document.querySelector('.prev-btn');
 
         // Clone first and last slides for infinite looping
         const firstClone = slides[0].cloneNode(true);
@@ -118,26 +114,44 @@
         track.appendChild(firstClone);
         track.insertBefore(lastClone, slides[0]);
 
-        // Setup Custom Scrollbar
-        const customScrollbarThumb = document.querySelector('.custom-scrollbar-thumb');
-        if (customScrollbarThumb) {
-            customScrollbarThumb.style.width = `${100 / originalSlidesCount}%`;
+        // Setup Carousel Dots
+        const indicatorsContainer = document.querySelector('.carousel-indicators');
+        const dots = [];
+        for (let i = 0; i < originalSlidesCount; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('carousel-dot');
+            if (i === 0) dot.classList.add('active');
+
+            dot.addEventListener('click', () => {
+                const slideWidth = trackContainer.offsetWidth;
+                trackContainer.scrollTo({
+                    left: slideWidth * (i + 1),
+                    behavior: 'smooth'
+                });
+            });
+
+            if (indicatorsContainer) {
+                indicatorsContainer.appendChild(dot);
+            }
+            dots.push(dot);
         }
 
-        const updateCustomScrollbar = () => {
-            if (!customScrollbarThumb) return;
+        const updateDots = () => {
             const slideWidth = trackContainer.offsetWidth;
             if (slideWidth === 0) return;
 
-            // Calculate current exact index relative to original slides
-            let exactIndex = (trackContainer.scrollLeft / slideWidth) - 1;
-
-            // Wrap the index using modulo arithmetic for smooth looping representation
+            let exactIndex = Math.round((trackContainer.scrollLeft / slideWidth) - 1);
             let mappedIndex = exactIndex % originalSlidesCount;
             if (mappedIndex < 0) mappedIndex += originalSlidesCount;
+            if (Object.is(mappedIndex, -0)) mappedIndex = 0;
 
-            // Transform thumb relative to its own width
-            customScrollbarThumb.style.transform = `translateX(${mappedIndex * 100}%)`;
+            dots.forEach((dot, index) => {
+                if (index === mappedIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
         };
 
         // Setup initial position to hide the clones from initial view
@@ -147,7 +161,7 @@
             setTimeout(() => {
                 trackContainer.style.scrollSnapType = 'x mandatory';
             }, 10);
-            updateCustomScrollbar();
+            updateDots();
         };
 
         // Call immediately and also on window load to ensure accurate width
@@ -155,7 +169,7 @@
         window.addEventListener('load', setInitialPosition);
 
         trackContainer.addEventListener('scroll', () => {
-            updateCustomScrollbar();
+            updateDots();
 
             const maxScrollLeft = trackContainer.scrollWidth - trackContainer.offsetWidth;
 
@@ -179,16 +193,12 @@
 
         window.addEventListener('resize', updateCustomScrollbar);
 
-        nextButton.addEventListener('click', () => {
-            const slideWidth = trackContainer.offsetWidth;
-            trackContainer.scrollBy({ left: slideWidth, behavior: 'smooth' });
-        });
 
-        prevButton.addEventListener('click', () => {
-            const slideWidth = trackContainer.offsetWidth;
-            trackContainer.scrollBy({ left: -slideWidth, behavior: 'smooth' });
-        });
     </script>
+
+    <footer class="site-footer">
+        &copy; 2026 Myeongjin. All rights reserved.
+    </footer>
 </body>
 
 </html>
