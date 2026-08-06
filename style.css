@@ -626,9 +626,14 @@ body:has(.nav-links.active) .main-content {
 }
 
 @media (max-width: 768px) {
+    .carousel-slide {
+        overflow: hidden;
+    }
+
     .carousel-slide img.landing-img {
-        width: 100%;
-        height: 100%;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100vw !important;
     }
 
     .project-info {
