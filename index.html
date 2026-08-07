@@ -8,12 +8,12 @@
     <title>PORTFOLIO</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=5">
 </head>
 
 <body>
-    <header class="header">
+    <header class="header landing-header-hidden" id="landing-header">
         <h1 class="logo"><a href="index.html"><img src="./sources/Logo.png" alt="Project CHnF"></a></h1>
         <nav class="nav">
             <button class="menu-toggle" aria-label="Toggle Menu">
@@ -27,12 +27,18 @@
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
+        <button id="landing-menu-toggle-btn" class="landing-menu-toggle-btn">Open Menu</button>
     </header>
 
-    <main class="main-content"
-        style="padding-left: 0; padding-right: 0; padding-bottom: 0; padding-top: 64px; margin-top: 116px; position: relative; background-color: rgba(255, 140, 66, 0.65);">
+    <main class="main-content" id="landing-main"
+        style="padding-left: 0; padding-right: 0; padding-bottom: 0; padding-top: 64px; margin-top: 0; position: relative; background-color: #0A3711; overflow: hidden;">
+
+        <div class="landing-title-container">
+            <h2 class="landing-title">mon<span class="highlight-text">thly Frame_APT</span></h2>
+        </div>
+
         <section class="gallery carousel-container"
-            style="background-color: transparent; margin: 0; position: relative; height: calc(100vh - 196px);">
+            style="background-color: transparent; margin: 0; position: relative; height: calc(100vh - 80px);">
             <div class="carousel-track-container">
                 <ul class="carousel-track">
                     <li class="carousel-slide">
@@ -196,18 +202,43 @@
             }
         });
 
-        // Horizontal scroll mapping for vertical mouse wheel
-        trackContainer.addEventListener('wheel', (evt) => {
-            // Translate vertical scroll to horizontal scroll
-            if (Math.abs(evt.deltaY) > Math.abs(evt.deltaX)) {
-                evt.preventDefault();
-                trackContainer.scrollLeft += evt.deltaY;
-            }
-        });
+        // Landing Page Header Toggle
+        const toggleBtn = document.getElementById('landing-menu-toggle-btn');
+        const landingHeader = document.getElementById('landing-header');
+        const landingMain = document.getElementById('landing-main');
+
+        if (toggleBtn && landingHeader) {
+            const toggleHeader = () => {
+                const isVisible = landingHeader.classList.contains('visible');
+                if (isVisible) {
+                    landingHeader.classList.remove('visible');
+                    if (landingMain) landingMain.classList.remove('shifted');
+                    toggleBtn.textContent = 'Open Menu';
+                } else {
+                    landingHeader.classList.add('visible');
+                    if (landingMain) landingMain.classList.add('shifted');
+                    toggleBtn.textContent = 'Close Menu';
+                }
+            };
+
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleHeader();
+            });
+
+            // Close header when clicking anywhere else outside of it
+            document.addEventListener('click', (e) => {
+                if (landingHeader.classList.contains('visible') && !landingHeader.contains(e.target)) {
+                    landingHeader.classList.remove('visible');
+                    if (landingMain) landingMain.classList.remove('shifted');
+                    toggleBtn.textContent = 'Open Menu';
+                }
+            });
+        }
     </script>
 
     <footer class="site-footer">
-        &copy; 2026 Myeongjin. All rights reserved.
+        &copy; 2026 Project CH&F. All rights reserved. <br> | website by MJ
     </footer>
 </body>
 

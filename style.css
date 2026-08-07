@@ -86,10 +86,15 @@ a {
     width: auto;
     flex-direction: column;
     align-items: flex-end;
-    padding: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
+    align-items: flex-end;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 100;
 
     /* Animation setup */
     opacity: 0;
@@ -149,12 +154,89 @@ a {
 }
 
 /* 
+  Landing Page Specific Header Toggle 
+*/
+.landing-header-hidden {
+    transform: translateY(-100%);
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.landing-header-hidden.visible {
+    transform: translateY(0);
+}
+
+.landing-menu-toggle-btn {
+    position: absolute;
+    bottom: -40px;
+    right: var(--spacing);
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #f7f7f5;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.landing-menu-toggle-btn:hover {
+    color: var(--accent-color);
+}
+
+/* 
+  Landing Page Title 
+*/
+.landing-title-container {
+    position: absolute;
+    top: 4vh;
+    left: 4vw;
+    z-index: 10;
+}
+
+.landing-title-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -20px;
+    transform: translateY(-50%);
+    width: 90px;
+    height: 90px;
+    background-color: rgba(255, 245, 238, 1);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.landing-title {
+    position: relative;
+    z-index: 1;
+    font-family: 'IBM Plex Mono', Courier, monospace;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    color: #333;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.landing-title .highlight-text {
+    color: rgba(255, 245, 238, 1);
+}
+
+/* 
   Main Content & Gallery 
 */
 .main-content {
     padding: calc(var(--spacing) * 4) var(--spacing) var(--spacing) var(--spacing);
     min-height: 100vh;
-    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+#landing-main.shifted {
+    transform: translateY(116px);
 }
 
 body:has(.nav-links.active) .main-content {
@@ -376,8 +458,30 @@ body:has(.nav-links.active) .main-content {
         padding: 1rem 1.5rem;
     }
 
-    .main-content, 
-    .project-detail, 
+    .landing-menu-toggle-btn {
+        bottom: -32px;
+        right: 1.5rem;
+        font-size: 0.7rem;
+    }
+
+    .landing-title-container {
+        top: 2vh;
+        left: 4vw;
+    }
+
+    .landing-title-container::before {
+        width: 60px;
+        height: 60px;
+        left: -10px;
+    }
+
+    .landing-title {
+        font-size: 1.1rem;
+        letter-spacing: 0.15em;
+    }
+
+    .main-content,
+    .project-detail,
     .about-page {
         padding-top: calc(var(--spacing) * 5);
     }
@@ -620,9 +724,10 @@ body:has(.nav-links.active) .main-content {
 }
 
 .carousel-slide img.landing-img {
-    width: 110%;
-    height: 110%;
+    width: 95%;
+    height: 95%;
     max-width: none;
+    margin-top: 6vh;
 }
 
 @media (max-width: 768px) {
@@ -631,9 +736,10 @@ body:has(.nav-links.active) .main-content {
     }
 
     .carousel-slide img.landing-img {
-        width: 100% !important;
-        height: 100% !important;
+        width: 85% !important;
+        height: 85% !important;
         max-width: 100vw !important;
+        margin-top: 4vh;
     }
 
     .project-info {
@@ -752,7 +858,9 @@ body:has(.nav-links.active) .main-content {
 }
 
 @media (max-width: 768px) {
-    .contact-top-row, .contact-bottom-row {
+
+    .contact-top-row,
+    .contact-bottom-row {
         grid-template-columns: 1fr;
         gap: 2.5rem;
     }
