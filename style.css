@@ -239,7 +239,7 @@ a {
   Main Content & Gallery 
 */
 .main-content {
-    padding: calc(var(--spacing) * 4) var(--spacing) var(--spacing) var(--spacing);
+    padding: 110px var(--spacing) var(--spacing) var(--spacing);
     min-height: 100vh;
     transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
@@ -490,7 +490,7 @@ body:has(.nav-links.active) .main-content {
     .main-content,
     .project-detail,
     .about-page {
-        padding-top: calc(var(--spacing) * 5);
+        padding-top: 110px;
     }
 
     .uniform-grid {
