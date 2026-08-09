@@ -471,7 +471,7 @@ body:has(.nav-links.active) .main-content {
     }
 
     .landing-title-container {
-        top: 4vh;
+        top: 5vh;
         left: 50%;
         transform: translateX(-50%);
     }
