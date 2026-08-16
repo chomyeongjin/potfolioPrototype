@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A minimalist portfolio website inspired by modern editorial layouts.">
+    <title>PORTFOLIO - Landing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./style.css?v=5">
+</head>
+
+<body>
+    <header class="header landing-header-hidden" id="landing-header">
+        <h1 class="logo"><a href="landing.html"><img src="./sources/Logo.png" alt="Project CHnF"></a></h1>
+        <nav class="nav">
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="works.html">Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <button id="landing-menu-toggle-btn" class="landing-menu-toggle-btn">Open Menu</button>
+    </header>
+
+    <main class="main-content" id="landing-main"
+        style="padding-left: 0; padding-right: 0; padding-bottom: 0; padding-top: 80px; margin-top: 0; position: relative; background-color: #f7f7f5; overflow: hidden;">
+
+        <div class="landing-title-container">
+            <h2 class="landing-title" id="dynamic-landing-title1">mon<span class="highlight-text" id="dynamic-landing-title2">thly Frame_APT</span></h2>
+        </div>
+
+        <section class="gallery carousel-container"
+            style="background-color: transparent; margin: 0; position: relative; height: calc(100vh - 80px);">
+            <div class="carousel-track-container">
+                <ul class="carousel-track" id="dynamic-carousel-track">
+                    <!-- Slides will be injected here by JS -->
+                </ul>
+            </div>
+            <div class="carousel-indicators" id="dynamic-carousel-indicators"></div>
+        </section>
+    </main>
+
+    <script>
+        // Simple menu toggle for mobile
+        document.querySelector('.menu-toggle').addEventListener('click', function () {
+            document.body.classList.toggle('menu-open');
+            document.querySelector('.nav-links').classList.toggle('active');
+            this.classList.toggle('open');
+        });
+
+        // API Endpoints
+        const WP_API_URL = 'http://chinhyosook.com/wp-json/wp/v2';
+
+        async function initLandingPage() {
+            try {
+                // 1. 글로벌 타이틀 로드 (Landing Settings 페이지)
+                const settingsResponse = await fetch(`${WP_API_URL}/pages?slug=landing-settings`);
+                if (settingsResponse.ok) {
+                    const settingsPages = await settingsResponse.json();
+                    if (settingsPages.length > 0) {
+                        const page = settingsPages[0];
+                        const acf = page.acf || {};
+                        
+                        // ACF 필드명 (landing_title1, landing_title2 등을 확인하여 맵핑)
+                        // 입력값이 없으면 기본값 유지
+                        const title1 = acf.landing_title1 || acf['landing title1'] || acf.landingtitle1;
+                        const title2 = acf.landing_title2 || acf['landing title2'] || acf.landingtitle2;
+                        
+                        if (title1) document.getElementById('dynamic-landing-title1').firstChild.textContent = title1;
+                        if (title2) document.getElementById('dynamic-landing-title2').textContent = title2;
+                    }
+                }
+
+                // 2. 캐러셀 슬라이드 로드 (Landings CPT)
+                const slidesResponse = await fetch(`${WP_API_URL}/landing?per_page=100&_embed`);
+                if (slidesResponse.ok) {
+                    const slides = await slidesResponse.json();
+                    renderSlides(slides);
+                } else {
+                    document.getElementById('dynamic-carousel-track').innerHTML = '<div style="text-align:center; padding: 50px;">등록된 랜딩 이미지가 없습니다.</div>';
+                }
+            } catch (error) {
+                console.error('Error fetching landing data:', error);
+            }
+        }
+
+        function renderSlides(slides) {
+            const track = document.getElementById('dynamic-carousel-track');
+            track.innerHTML = ''; // 초기화
+
+            if (slides.length === 0) {
+                track.innerHTML = '<div style="text-align:center; padding: 50px;">등록된 랜딩 이미지가 없습니다.</div>';
+                return;
+            }
+
+            slides.forEach(slide => {
+                const title = slide.title.rendered;
+                const acf = slide.acf || {};
+                const architect = acf.architect || acf.archiect || acf.architecture || '';
+                const year = acf.year || '';
+                
+                let metaText = '';
+                if (architect && year) metaText = `${architect} / ${year}`;
+                else if (architect) metaText = architect;
+                else if (year) metaText = year;
+
+                // 특성 이미지(Featured Image) 추출
+                let imageUrl = './sources/Logo.png';
+                if (slide._embedded && slide._embedded['wp:featuredmedia']) {
+                    imageUrl = slide._embedded['wp:featuredmedia'][0].source_url;
+                }
+
+                const slideHTML = `
+                    <li class="carousel-slide">
+                        <div class="grid-item" style="margin-bottom: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; overflow: visible;">
+                            <img src="${imageUrl}" alt="${title}" loading="lazy" class="landing-img">
+                            <div class="landing-project-info">
+                                <span class="project-name">${title}</span>
+                                ${metaText ? `<span class="project-meta">${metaText}</span>` : ''}
+                            </div>
+                        </div>
+                    </li>
+                `;
+                track.insertAdjacentHTML('beforeend', slideHTML);
+            });
+
+            // 슬라이드 렌더링 후 캐러셀 초기화
+            initCarousel();
+        }
+
+        // Infinite Carousel Logic (렌더링 완료 후 실행되도록 함수로 감쌈)
+        function initCarousel() {
+            const trackContainer = document.querySelector('.carousel-track-container');
+            const track = document.getElementById('dynamic-carousel-track');
+            const originalSlidesCount = track.children.length;
+            
+            if(originalSlidesCount <= 0) return;
+            if(originalSlidesCount === 1) {
+                // 1장이면 중앙 정렬하고 스크롤 제거
+                trackContainer.style.overflowX = 'hidden';
+                return; 
+            }
+
+            const slidesArray = Array.from(track.children);
+
+            // Clone first and last slides for infinite looping
+            const firstClone = slidesArray[0].cloneNode(true);
+            const lastClone = slidesArray[slidesArray.length - 1].cloneNode(true);
+
+            track.appendChild(firstClone);
+            track.insertBefore(lastClone, slidesArray[0]);
+
+            // Setup Carousel Dots
+            const indicatorsContainer = document.getElementById('dynamic-carousel-indicators');
+            indicatorsContainer.innerHTML = ''; // 초기화
+            
+            const dots = [];
+            for (let i = 0; i < originalSlidesCount; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('carousel-dot');
+                if (i === 0) dot.classList.add('active');
+
+                dot.addEventListener('click', () => {
+                    const slideWidth = trackContainer.offsetWidth;
+                    trackContainer.scrollTo({
+                        left: slideWidth * (i + 1),
+                        behavior: 'smooth'
+                    });
+                });
+
+                indicatorsContainer.appendChild(dot);
+                dots.push(dot);
+            }
+
+            const updateDots = () => {
+                const slideWidth = trackContainer.offsetWidth;
+                if (slideWidth === 0) return;
+
+                let exactIndex = Math.round((trackContainer.scrollLeft / slideWidth) - 1);
+                let mappedIndex = exactIndex % originalSlidesCount;
+                if (mappedIndex < 0) mappedIndex += originalSlidesCount;
+                if (Object.is(mappedIndex, -0)) mappedIndex = 0;
+
+                dots.forEach((dot, index) => {
+                    if (index === mappedIndex) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            };
+
+            window.addEventListener('resize', () => {
+                setTimeout(updateDots, 100);
+            });
+
+            const setInitialPosition = () => {
+                trackContainer.style.scrollSnapType = 'none';
+                trackContainer.scrollLeft = trackContainer.offsetWidth;
+                setTimeout(() => {
+                    trackContainer.style.scrollSnapType = 'x mandatory';
+                }, 10);
+                updateDots();
+            };
+
+            setInitialPosition();
+
+            trackContainer.addEventListener('scroll', () => {
+                updateDots();
+                const maxScrollLeft = trackContainer.scrollWidth - trackContainer.offsetWidth;
+
+                if (trackContainer.scrollLeft <= 0) {
+                    trackContainer.style.scrollSnapType = 'none';
+                    trackContainer.scrollLeft = trackContainer.offsetWidth * originalSlidesCount;
+                    setTimeout(() => {
+                        trackContainer.style.scrollSnapType = 'x mandatory';
+                    }, 0);
+                } else if (trackContainer.scrollLeft >= maxScrollLeft - 1) {
+                    trackContainer.style.scrollSnapType = 'none';
+                    trackContainer.scrollLeft = trackContainer.offsetWidth;
+                    setTimeout(() => {
+                        trackContainer.style.scrollSnapType = 'x mandatory';
+                    }, 0);
+                }
+            });
+
+            // 좌우 가장자리 클릭 및 커서 변경 (Navigation)
+            trackContainer.addEventListener('mousemove', (e) => {
+                const rect = trackContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const width = rect.width;
+                if (x < width * 0.3) {
+                    trackContainer.style.cursor = 'pointer'; // 이전
+                } else if (x > width * 0.7) {
+                    trackContainer.style.cursor = 'pointer'; // 다음
+                } else {
+                    trackContainer.style.cursor = 'default';
+                }
+            });
+
+            trackContainer.addEventListener('mouseleave', () => {
+                trackContainer.style.cursor = 'default';
+            });
+
+            trackContainer.addEventListener('click', (e) => {
+                const rect = trackContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const width = rect.width;
+                const slideWidth = trackContainer.offsetWidth;
+
+                if (x < width * 0.3) {
+                    trackContainer.scrollBy({ left: -slideWidth, behavior: 'smooth' });
+                } else if (x > width * 0.7) {
+                    trackContainer.scrollBy({ left: slideWidth, behavior: 'smooth' });
+                }
+            });
+        }
+
+        // Landing Page Header Toggle
+        const toggleBtn = document.getElementById('landing-menu-toggle-btn');
+        const landingHeader = document.getElementById('landing-header');
+        const landingMain = document.getElementById('landing-main');
+
+        if (toggleBtn && landingHeader) {
+            const toggleHeader = () => {
+                const isVisible = landingHeader.classList.contains('visible');
+                if (isVisible) {
+                    landingHeader.classList.remove('visible');
+                    if (landingMain) landingMain.classList.remove('shifted');
+                    toggleBtn.textContent = 'Open Menu';
+                } else {
+                    landingHeader.classList.add('visible');
+                    if (landingMain) landingMain.classList.add('shifted');
+                    toggleBtn.textContent = 'Close Menu';
+                }
+            };
+
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleHeader();
+            });
+
+            // Close header when clicking anywhere else outside of it
+            document.addEventListener('click', (e) => {
+                if (landingHeader.classList.contains('visible') && !landingHeader.contains(e.target)) {
+                    landingHeader.classList.remove('visible');
+                    if (landingMain) landingMain.classList.remove('shifted');
+                    toggleBtn.textContent = 'Open Menu';
+                }
+            });
+        }
+
+        // 페이지 로드 시 API 호출
+        document.addEventListener('DOMContentLoaded', initLandingPage);
+    </script>
+
+    <footer class="site-footer">
+        &copy; 2026 Project CH&F. All rights reserved. <br> | website by MJ
+    </footer>
+</body>
+
+</html>

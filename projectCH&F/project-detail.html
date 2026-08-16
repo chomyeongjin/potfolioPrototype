@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO - Project Detail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css?v=6">
+    <style>
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-color);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; font-size: 1.2rem; color: var(--text-color);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading" class="loading-overlay">프로젝트 정보를 불러오는 중입니다...</div>
+
+    <header class="header">
+        <h1 class="logo"><a href="landing.html"><img src="./sources/Logo.png" alt="Project CHnF"></a></h1>
+        <nav class="nav">
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="works.html" style="font-weight: 600; color: var(--text-color);">Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content project-detail">
+        <div class="carousel-container" id="detail-carousel-container" style="display: none;">
+            <div class="carousel-track-container">
+                <ul class="carousel-track" id="carousel-track">
+                    <!-- 자바스크립트로 사진들이 추가됩니다 -->
+                </ul>
+            </div>
+            <div class="carousel-indicators" id="carousel-indicators"></div>
+        </div>
+
+        <div class="project-info" id="project-info" style="display: none;">
+            <!-- 자바스크립트로 정보가 추가됩니다 -->
+        </div>
+
+        <div class="project-tags" id="project-tags" style="display: none;">
+            <!-- 자바스크립트로 태그가 추가됩니다 -->
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        &copy; 2026 Project CH&F. All rights reserved. <br> | website by MJ
+    </footer>
+
+    <script>
+        // 메뉴 토글
+        document.querySelector('.menu-toggle').addEventListener('click', function () {
+            document.body.classList.toggle('menu-open');
+            document.querySelector('.nav-links').classList.toggle('active');
+            this.classList.toggle('open');
+        });
+
+        // URL 파라미터에서 ID 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
+        const WP_API_URL = 'http://chinhyosook.com/wp-json/wp/v2';
+
+        async function initProjectDetail() {
+            if (!projectId) {
+                document.getElementById('loading').textContent = '잘못된 접근입니다.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${WP_API_URL}/work/${projectId}?_embed`);
+                if (!response.ok) throw new Error('프로젝트를 찾을 수 없습니다.');
+                
+                const project = await response.json();
+                renderProject(project);
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading').textContent = '데이터를 불러오는 중 에러가 발생했습니다.';
+            }
+        }
+
+        function renderProject(project) {
+            const acf = project.acf || {};
+
+            // 1. 정보 렌더링
+            const title = project.title.rendered;
+            const architect = acf.architect || acf.archiect || acf.architecture || 'Unknown Architect';
+            const year = acf.year || '';
+            const place = acf.place || 'Unknown Place';
+
+            const infoHTML = `
+                <div class="info-row"><span class="info-label">Project:</span><span class="info-value">${title}, </span></div>
+                <div class="info-row"><span class="info-label">Architect:</span><span class="info-value">${architect},</span></div>
+                <div class="info-row"><span class="info-label">Place:</span><span class="info-value">${place},</span></div>
+                <div class="info-row"><span class="info-label">Year:</span><span class="info-value">${year}</span></div>
+            `;
+            document.getElementById('project-info').innerHTML = infoHTML;
+            document.getElementById('project-info').style.display = 'block';
+
+            // 2. 태그 렌더링
+            let tags = acf.tag ? acf.tag.split(',').map(t => t.trim()) : [];
+            if (tags.length === 0 && project._embedded && project._embedded['wp:term']) {
+                const terms = project._embedded['wp:term'].flat();
+                tags = terms.filter(t => t.taxonomy === 'work_tag').map(t => t.name);
+            }
+            
+            if (tags.length > 0) {
+                const tagsHTML = tags.map(t => `<span class="tag">#${t}</span>`).join('');
+                document.getElementById('project-tags').innerHTML = tagsHTML;
+                document.getElementById('project-tags').style.display = 'flex';
+            }
+
+            // 3. 갤러리 렌더링 (워드프레스 본문 이미지 추출 활용)
+            let photoUrls = [];
+            
+            // 워드프레스 본문(에디터)에 올려둔 이미지들을 HTML에서 추출하여 캐러셀에 전달합니다.
+            if (project.content && project.content.rendered) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = project.content.rendered;
+                const imgs = tempDiv.querySelectorAll('img');
+                imgs.forEach(img => {
+                    if (img.src) photoUrls.push(img.src);
+                });
+            }
+
+            // 사진이 없으면 ACF 썸네일이나 기본 이미지를 넣습니다
+            if (photoUrls.length === 0) {
+                let fallbackImage = './sources/Logo.png';
+                const acfThumb = acf.thumbnail || acf.thumnail;
+                
+                if (acfThumb && typeof acfThumb === 'string') {
+                    fallbackImage = acfThumb;
+                } else if (acf.featured_image_url) {
+                    fallbackImage = acf.featured_image_url.startsWith('./') ? `.${acf.featured_image_url}` : acf.featured_image_url;
+                } else if (acf.image_url) {
+                    fallbackImage = acf.image_url.startsWith('./') ? `.${acf.image_url}` : acf.image_url;
+                }
+                photoUrls.push(fallbackImage);
+            }
+
+            const track = document.getElementById('carousel-track');
+            photoUrls.forEach(url => {
+                const fixedUrl = url.startsWith('./') ? `.${url}` : url; // 상대 경로 보정
+                track.insertAdjacentHTML('beforeend', `<li class="carousel-slide"><img src="${fixedUrl}" alt="${title}"></li>`);
+            });
+
+            document.getElementById('detail-carousel-container').style.display = 'block';
+            
+            // 로딩 숨기기
+            document.getElementById('loading').style.display = 'none';
+
+            // 슬라이더 초기화
+            initCarousel();
+        }
+
+        function initCarousel() {
+            const trackContainer = document.querySelector('.carousel-track-container');
+            const track = document.querySelector('.carousel-track');
+            const originalSlidesCount = track.children.length;
+            
+            if(originalSlidesCount <= 1) return; // 1장이면 무한루프 불필요
+
+            const slides = Array.from(track.children);
+            const firstClone = slides[0].cloneNode(true);
+            const lastClone = slides[slides.length - 1].cloneNode(true);
+
+            track.appendChild(firstClone);
+            track.insertBefore(lastClone, slides[0]);
+
+            const indicatorsContainer = document.getElementById('carousel-indicators');
+            const dots = [];
+            for (let i = 0; i < originalSlidesCount; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('carousel-dot');
+                if (i === 0) dot.classList.add('active');
+
+                dot.addEventListener('click', () => {
+                    const slideWidth = trackContainer.offsetWidth;
+                    trackContainer.scrollTo({
+                        left: slideWidth * (i + 1),
+                        behavior: 'smooth'
+                    });
+                });
+
+                if (indicatorsContainer) {
+                    indicatorsContainer.appendChild(dot);
+                }
+                dots.push(dot);
+            }
+
+            const updateDots = () => {
+                const slideWidth = trackContainer.offsetWidth;
+                if (slideWidth === 0) return;
+
+                let exactIndex = Math.round((trackContainer.scrollLeft / slideWidth) - 1);
+                let mappedIndex = exactIndex % originalSlidesCount;
+                if (mappedIndex < 0) mappedIndex += originalSlidesCount;
+                if (Object.is(mappedIndex, -0)) mappedIndex = 0;
+
+                dots.forEach((dot, index) => {
+                    if (index === mappedIndex) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            };
+
+            const setInitialPosition = () => {
+                trackContainer.style.scrollSnapType = 'none';
+                trackContainer.scrollLeft = trackContainer.offsetWidth;
+                setTimeout(() => {
+                    trackContainer.style.scrollSnapType = 'x mandatory';
+                }, 10);
+                updateDots();
+            };
+
+            setInitialPosition();
+            window.addEventListener('resize', setInitialPosition);
+
+            trackContainer.addEventListener('scroll', () => {
+                updateDots();
+                const maxScrollLeft = trackContainer.scrollWidth - trackContainer.offsetWidth;
+
+                if (trackContainer.scrollLeft <= 0) {
+                    trackContainer.style.scrollSnapType = 'none';
+                    trackContainer.scrollLeft = trackContainer.offsetWidth * originalSlidesCount;
+                    setTimeout(() => { trackContainer.style.scrollSnapType = 'x mandatory'; }, 0);
+                }
+                else if (trackContainer.scrollLeft >= maxScrollLeft - 1) {
+                    trackContainer.style.scrollSnapType = 'none';
+                    trackContainer.scrollLeft = trackContainer.offsetWidth;
+                    setTimeout(() => { trackContainer.style.scrollSnapType = 'x mandatory'; }, 0);
+                }
+            });
+
+            // 좌우 가장자리 클릭 및 커서 변경 (Navigation)
+            trackContainer.addEventListener('mousemove', (e) => {
+                const rect = trackContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const width = rect.width;
+                if (x < width * 0.3) {
+                    trackContainer.style.cursor = 'pointer'; // 이전
+                } else if (x > width * 0.7) {
+                    trackContainer.style.cursor = 'pointer'; // 다음
+                } else {
+                    trackContainer.style.cursor = 'default';
+                }
+            });
+
+            trackContainer.addEventListener('mouseleave', () => {
+                trackContainer.style.cursor = 'default';
+            });
+
+            trackContainer.addEventListener('click', (e) => {
+                const rect = trackContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const width = rect.width;
+                const slideWidth = trackContainer.offsetWidth;
+
+                if (x < width * 0.3) {
+                    trackContainer.scrollBy({ left: -slideWidth, behavior: 'smooth' });
+                } else if (x > width * 0.7) {
+                    trackContainer.scrollBy({ left: slideWidth, behavior: 'smooth' });
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initProjectDetail);
+    </script>
+</body>
+</html>

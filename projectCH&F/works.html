@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A minimalist portfolio website inspired by modern editorial layouts.">
+    <title>PORTFOLIO - Works</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css?v=7">
+    <style>
+        .loading-spinner {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1 class="logo"><a href="landing.html"><img src="./sources/Logo.png" alt="Project CHnF"></a></h1>
+        <nav class="nav">
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="works.html" style="font-weight: 600; color: var(--text-color);">Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <!-- 필터 섹션 -->
+        <section class="filter-section">
+            <div class="filter-group location-filters dropdown-group">
+                <button class="dropdown-toggle" aria-expanded="false">Place: All <span>&#9662;</span></button>
+                <div class="dropdown-content" id="place-filter-content">
+                    <button class="filter-btn active" data-type="location" data-filter="all">All Places</button>
+                </div>
+            </div>
+            <!-- 태그 필터 (태그 데이터가 있다면 활성화) -->
+            <div class="filter-group tag-filters dropdown-group">
+                <button class="dropdown-toggle" aria-expanded="false">Tag: All <span>&#9662;</span></button>
+                <div class="dropdown-content" id="tag-filter-content">
+                    <button class="filter-btn active" data-type="tag" data-filter="all">All</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 갤러리 섹션 -->
+        <section class="gallery">
+            <div class="uniform-grid" id="works-grid">
+                <!-- 자바스크립트를 통해 워드프레스 데이터가 여기에 렌더링됩니다 -->
+                <div class="loading-spinner">포트폴리오 데이터를 불러오는 중입니다...</div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        &copy; 2026 Project CH&F. All rights reserved. <br> | website by MJ
+    </footer>
+
+    <script>
+        // --------------------------------------------------------
+        // 1. 공통 UI 로직 (메뉴 및 드롭다운)
+        // --------------------------------------------------------
+        document.querySelector('.menu-toggle').addEventListener('click', function () {
+            document.body.classList.toggle('menu-open');
+            document.querySelector('.nav-links').classList.toggle('active');
+            this.classList.toggle('open');
+        });
+
+        const setupDropdowns = () => {
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            dropdownToggles.forEach(toggle => {
+                // Remove old event listeners by cloning if necessary, or just add
+                toggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isActive = this.classList.contains('active');
+                    this.classList.toggle('active', !isActive);
+                    this.nextElementSibling.classList.toggle('active', !isActive);
+                    this.setAttribute('aria-expanded', !isActive);
+                });
+            });
+
+            document.addEventListener('click', () => {
+                dropdownToggles.forEach(toggle => {
+                    toggle.classList.remove('active');
+                    toggle.nextElementSibling.classList.remove('active');
+                    toggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                content.addEventListener('click', e => e.stopPropagation());
+            });
+        };
+
+        // --------------------------------------------------------
+        // 2. 워드프레스 API 연동 및 렌더링 로직 (Headless WP)
+        // --------------------------------------------------------
+        const WP_API_URL = 'http://chinhyosook.com/wp-json/wp/v2';
+        
+        let allProjects = []; // 서버에서 불러온 전체 프로젝트 데이터
+        let activeLocations = new Set(['all']);
+        let activeTags = new Set(['all']);
+
+        // 초기화 함수
+        async function initWorksPage() {
+            setupDropdowns();
+            await fetchProjects();
+            renderProjects(allProjects);
+            generateFilters(allProjects);
+        }
+
+        // 워드프레스에서 포트폴리오(work) 데이터 가져오기
+        async function fetchProjects() {
+            try {
+                // _embed 파라미터를 추가하면 썸네일(Featured Image) 정보도 같이 가져옵니다.
+                const response = await fetch(`${WP_API_URL}/work?_embed&per_page=100`);
+                if (!response.ok) throw new Error('데이터를 불러오는데 실패했습니다.');
+                
+                allProjects = await response.json();
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+                document.getElementById('works-grid').innerHTML = `<div class="loading-spinner">데이터를 불러오는 중 에러가 발생했습니다.</div>`;
+            }
+        }
+
+        // 프로젝트를 화면에 그리기
+        function renderProjects(projects) {
+            const gridContainer = document.getElementById('works-grid');
+            gridContainer.innerHTML = ''; // 로딩 스피너 제거
+
+            if (projects.length === 0) {
+                gridContainer.innerHTML = `<div class="loading-spinner">등록된 포트폴리오가 없습니다.</div>`;
+                return;
+            }
+
+            projects.forEach(project => {
+                const acf = project.acf || {};
+                
+                // 데이터 추출 (ACF 필드 이름 매핑)
+                const title = project.title.rendered;
+                const architect = acf.architect || acf.archiect || acf.architecture || 'Unknown Architect';
+                const year = acf.year || '';
+                const place = acf.place || 'Unknown Place';
+                
+                // 이미지 추출 로직: 워드프레스 ACF 썸네일 우선, 없으면 WP 기본 특성 미디어
+                let imageUrl = './sources/Logo.png'; // 기본 이미지
+                const acfThumb = acf.thumbnail || acf.thumnail; // 오타 방어
+                
+                if (acfThumb && typeof acfThumb === 'string') {
+                    imageUrl = acfThumb; // ACF 이미지 필드 URL
+                } else if (acf.featured_image_url) {
+                    imageUrl = acf.featured_image_url.startsWith('./') ? `.${acf.featured_image_url}` : acf.featured_image_url;
+                } else if (acf.image_url) {
+                    imageUrl = acf.image_url.startsWith('./') ? `.${acf.image_url}` : acf.image_url;
+                } else if (project._embedded && project._embedded['wp:featuredmedia']) {
+                    imageUrl = project._embedded['wp:featuredmedia'][0].source_url;
+                }
+
+                // 태그 추출 (우선 ACF 필드 확인, 없으면 taxonomy 확인 가능)
+                let tags = acf.tag ? acf.tag.split(',').map(t => t.trim()) : [];
+                if (tags.length === 0 && project._embedded && project._embedded['wp:term']) {
+                    const terms = project._embedded['wp:term'].flat();
+                    tags = terms.filter(t => t.taxonomy === 'work_tag').map(t => t.name);
+                }
+                const tagString = tags.join(',');
+
+                // 상세 페이지로 이동할 때 프로젝트 ID를 넘깁니다.
+                const detailUrl = `project-detail.html?id=${project.id}`;
+
+                const slideHTML = `
+                    <a href="${detailUrl}" class="grid-item" data-location="${place}" data-tag="${tagString}">
+                        <img src="${imageUrl}" alt="${title}" loading="lazy">
+                        <div class="hover-overlay">
+                            <h3>${title}</h3>
+                            <p>${architect}</p>
+                            <p>${place}</p>
+                            <p>${year}</p>
+                        </div>
+                    </a>
+                `;
+                gridContainer.insertAdjacentHTML('beforeend', slideHTML);
+            });
+        }
+
+        // 동적 필터 생성 로직
+        function generateFilters(projects) {
+            const places = new Set();
+            const tags = new Set();
+
+            projects.forEach(project => {
+                const acf = project.acf || {};
+                if (acf.place) places.add(acf.place);
+                
+                if (acf.tag) {
+                    acf.tag.split(',').forEach(t => tags.add(t.trim()));
+                } else if (project._embedded && project._embedded['wp:term']) {
+                    const terms = project._embedded['wp:term'].flat();
+                    terms.filter(t => t.taxonomy === 'work_tag').forEach(t => tags.add(t.name));
+                }
+            });
+
+            // 장소 버튼 렌더링
+            const placeContainer = document.getElementById('place-filter-content');
+            places.forEach(place => {
+                const btn = `<button class="filter-btn" data-type="location" data-filter="${place}">${place}</button>`;
+                placeContainer.insertAdjacentHTML('beforeend', btn);
+            });
+
+            // 태그 버튼 렌더링
+            const tagContainer = document.getElementById('tag-filter-content');
+            tags.forEach(tag => {
+                const btn = `<button class="filter-btn" data-type="tag" data-filter="${tag}">${tag}</button>`;
+                tagContainer.insertAdjacentHTML('beforeend', btn);
+            });
+
+            // 생성된 버튼들에 이벤트 리스너 부착
+            document.querySelectorAll('.filter-btn').forEach(btn => attachFilterLogic(btn));
+        }
+
+        // 필터 동작 로직 (기존 로직 유지, 효율성 개선)
+        function attachFilterLogic(btn) {
+            btn.addEventListener('click', () => {
+                const type = btn.getAttribute('data-type');
+                const filterValue = btn.getAttribute('data-filter');
+                const dropdownToggle = btn.closest('.dropdown-group').querySelector('.dropdown-toggle');
+
+                if (type === 'location') {
+                    if (filterValue === 'all') {
+                        activeLocations.clear();
+                        activeLocations.add('all');
+                        document.querySelectorAll(`.filter-btn[data-type="location"]`).forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    } else {
+                        activeLocations.delete('all');
+                        const allBtn = document.querySelector(`.filter-btn[data-type="location"][data-filter="all"]`);
+                        if (allBtn) allBtn.classList.remove('active');
+
+                        if (activeLocations.has(filterValue)) {
+                            activeLocations.delete(filterValue);
+                            btn.classList.remove('active');
+                        } else {
+                            activeLocations.add(filterValue);
+                            btn.classList.add('active');
+                        }
+
+                        if (activeLocations.size === 0) {
+                            activeLocations.add('all');
+                            if (allBtn) allBtn.classList.add('active');
+                        }
+                    }
+
+                    let displayValue = 'All Places';
+                    if (!activeLocations.has('all')) {
+                        const activeBtns = Array.from(document.querySelectorAll(`.filter-btn[data-type="location"].active`));
+                        if (activeBtns.length <= 2) {
+                            displayValue = activeBtns.map(b => b.textContent).join(', ');
+                        } else {
+                            displayValue = `${activeBtns.length} selected`;
+                        }
+                    }
+                    dropdownToggle.innerHTML = `Place: ${displayValue} <span>&#9662;</span>`;
+
+                } else if (type === 'tag') {
+                    if (filterValue === 'all') {
+                        activeTags.clear();
+                        activeTags.add('all');
+                        document.querySelectorAll(`.filter-btn[data-type="tag"]`).forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    } else {
+                        activeTags.delete('all');
+                        const allBtn = document.querySelector(`.filter-btn[data-type="tag"][data-filter="all"]`);
+                        if (allBtn) allBtn.classList.remove('active');
+
+                        if (activeTags.has(filterValue)) {
+                            activeTags.delete(filterValue);
+                            btn.classList.remove('active');
+                        } else {
+                            activeTags.add(filterValue);
+                            btn.classList.add('active');
+                        }
+
+                        if (activeTags.size === 0) {
+                            activeTags.add('all');
+                            if (allBtn) allBtn.classList.add('active');
+                        }
+                    }
+
+                    let displayValue = 'All';
+                    if (!activeTags.has('all')) {
+                        const activeBtns = Array.from(document.querySelectorAll(`.filter-btn[data-type="tag"].active`));
+                        if (activeBtns.length <= 2) {
+                            displayValue = activeBtns.map(b => b.textContent).join(', ');
+                        } else {
+                            displayValue = `${activeBtns.length} selected`;
+                        }
+                    }
+                    dropdownToggle.innerHTML = `Tag: ${displayValue} <span>&#9662;</span>`;
+                }
+
+                applyFilters();
+            });
+        }
+
+        function applyFilters() {
+            const allGridItems = document.querySelectorAll('.grid-item');
+            
+            allGridItems.forEach(item => {
+                const itemLocation = item.getAttribute('data-location');
+                const itemTag = item.getAttribute('data-tag');
+
+                const locationMatch = activeLocations.has('all') || activeLocations.has(itemLocation);
+                const itemTags = itemTag ? itemTag.split(',').map(t => t.trim()) : [];
+                const tagMatch = activeTags.has('all') || itemTags.some(t => activeTags.has(t));
+
+                if (locationMatch && tagMatch) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+
+        // 페이지 로드 시 초기화 실행
+        document.addEventListener('DOMContentLoaded', initWorksPage);
+
+    </script>
+</body>
+</html>

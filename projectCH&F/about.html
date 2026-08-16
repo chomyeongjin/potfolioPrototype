@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO - About</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css?v=8">
+    <style>
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-color);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; font-size: 1.2rem; color: var(--text-color);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 로딩 스크린 -->
+    <div id="loading" class="loading-overlay">작가 정보를 불러오는 중입니다...</div>
+
+    <header class="header">
+        <h1 class="logo"><a href="landing.html"><img src="./sources/Logo.png" alt="Project CHnF"></a></h1>
+        <nav class="nav">
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="works.html">Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content about-page" style="display: none;" id="main-content">
+        <div class="about-container">
+            <!-- 한글 섹션 -->
+            <h2 class="about-title" id="title-ko">
+                <!-- JS에서 이름 렌더링 -->
+            </h2>
+            <div class="about-content" id="desc-ko">
+                <!-- JS에서 설명 렌더링 -->
+            </div>
+
+            <div style="margin: 4rem 0; border-top: 1px solid rgba(0,0,0,0.1);"></div>
+
+            <!-- 영문 섹션 -->
+            <div style="color: var(--accent-color);">
+                <h2 class="about-title" id="title-en">
+                    <!-- JS에서 이름 렌더링 -->
+                </h2>
+                <div class="about-content" id="desc-en">
+                    <!-- JS에서 설명 렌더링 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        &copy; 2026 Project CH&F. All rights reserved. <br> | website by MJ
+    </footer>
+
+    <script>
+        // 모바일 메뉴 토글
+        document.querySelector('.menu-toggle').addEventListener('click', function () {
+            document.body.classList.toggle('menu-open');
+            document.querySelector('.nav-links').classList.toggle('active');
+            this.classList.toggle('open');
+        });
+
+        // 엔터(\n)를 <p> 태그 문단으로 예쁘게 바꿔주는 마법의 함수
+        function formatDescription(text) {
+            if (!text) return '';
+            // 엔터(\n)를 기준으로 텍스트를 쪼개고, 각각 <p> 태그로 감싸줍니다.
+            return text.split('\n')
+                       .map(paragraph => paragraph.trim())
+                       .filter(paragraph => paragraph.length > 0) // 빈 줄 제거
+                       .map(paragraph => `<p>${paragraph}</p>`)
+                       .join('');
+        }
+
+        // 워드프레스 데이터 연동 로직
+        const WP_API_URL = 'http://chinhyosook.com/wp-json/wp/v2/pages?slug=about';
+
+        async function initAboutPage() {
+            try {
+                const response = await fetch(WP_API_URL);
+                if (!response.ok) throw new Error('서버 통신 에러');
+                
+                const pages = await response.json();
+                if (pages.length === 0) throw new Error('About 페이지를 찾을 수 없습니다.');
+                
+                const acf = pages[0].acf || {};
+
+                // 데이터 추출 (기본값 설정)
+                const nameKo = acf.name_ko || '진 효 숙';
+                const descKo = acf.descriptions_ko || '한국어 설명을 워드프레스에 입력해주세요.';
+                const nameEn = acf.name_en || 'Chin Hyosook';
+                const descEn = acf.descriptions_en || 'Please enter the English description in WordPress.';
+
+                // 화면에 뿌려주기
+                document.getElementById('title-ko').innerHTML = `${nameKo} <span class="en-name">건축사진가</span>`;
+                document.getElementById('desc-ko').innerHTML = formatDescription(descKo);
+                
+                document.getElementById('title-en').innerHTML = `${nameEn} <span class="en-name">Architectural Photographer</span>`;
+                document.getElementById('desc-en').innerHTML = formatDescription(descEn);
+
+                // 로딩 숨기고 진짜 컨텐츠 보여주기
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading').textContent = '데이터를 불러오는 중 에러가 발생했습니다.';
+            }
+        }
+
+        // 페이지가 열리면 즉시 실행!
+        document.addEventListener('DOMContentLoaded', initAboutPage);
+    </script>
+</body>
+</html>

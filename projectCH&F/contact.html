@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO - Contact</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css?v=9">
+    <style>
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 로딩 스크린 -->
+    <div id="loading" class="loading-overlay">연락처 정보를 불러오는 중입니다...</div>
+
+    <header class="header">
+        <h1 class="logo"><a href="landing.html"><img src="./sources/Logo.png" alt="Project CHnF"></a></h1>
+        <nav class="nav">
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="works.html">Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html" style="font-weight: 600; color: var(--text-color);">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content about-page" style="display: none;" id="main-content">
+        <div class="about-container">
+            <div class="contact-copyright"
+                style="margin-bottom: 4rem; padding-bottom: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <h4
+                    style="font-size: 1rem; font-weight: 600; margin-bottom: 0.8rem; color: var(--text-color); letter-spacing: 0.05em; text-align: center;">
+                    Image Usage & Copyright</h4>
+                <p
+                    style="font-size: 0.95rem; line-height: 1.8; color: var(--text-color); margin: 0; text-align: center;">
+                    본 웹사이트의 모든 사진은 <strong>Project CH&F</strong>에게 저작권이 있습니다. <br>이미지 라이선스 구매나 사용 허가가 필요하신 경우 아래의
+                    연락처로 문의 바랍니다.</p>
+            </div>
+            <h2 class="about-title">Contact us</h2>
+            <div class="about-content contact-layout">
+                <div class="contact-top-row">
+                    <div class="contact-block">
+                        <h4>Address.</h4>
+                        <div id="address-field">
+                            <!-- JS에서 주소 렌더링 -->
+                        </div>
+                    </div>
+                    <div class="contact-map" id="map-container">
+                        <!-- JS에서 지도 렌더링 -->
+                    </div>
+                </div>
+
+                <div class="contact-bottom-row">
+                    <div class="contact-block">
+                        <h4>Phone.</h4>
+                        <p id="phone-field"><!-- JS에서 전화번호 렌더링 --></p>
+                    </div>
+                    <div class="contact-block">
+                        <h4>E-mail.</h4>
+                        <p id="email-field"><!-- JS에서 이메일 렌더링 --></p>
+                    </div>
+                    <div class="contact-block">
+                        <h4>Instagram.</h4>
+                        <p id="instagram-field">
+                            <!-- JS에서 인스타그램 렌더링 -->
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 모바일 메뉴 토글
+        document.querySelector('.menu-toggle').addEventListener('click', function () {
+            document.body.classList.toggle('menu-open');
+            document.querySelector('.nav-links').classList.toggle('active');
+            this.classList.toggle('open');
+        });
+
+        // 엔터(\n)를 <br> 태그로 예쁘게 바꿔주는 함수 (주소용)
+        function formatAddress(text) {
+            if (!text) return '';
+            return text.split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0)
+                .join('<br>');
+        }
+
+        // 워드프레스 데이터 연동 로직
+        const WP_API_URL = 'http://chinhyosook.com/wp-json/wp/v2/pages?slug=contact';
+
+        async function initContactPage() {
+            try {
+                const response = await fetch(WP_API_URL);
+                if (!response.ok) throw new Error('서버 통신 에러');
+
+                const pages = await response.json();
+                if (pages.length === 0) throw new Error('Contact 페이지를 찾을 수 없습니다.');
+
+                const acf = pages[0].acf || {};
+
+                // 1. 데이터 추출 (기본값 설정)
+                // ACF 필드명 자동 변환(띄어쓰기는 보통 언더바_ 로 바뀝니다) 고려
+                const addressName = acf.address_name || acf['address name'] || '[ Project CH&F ]';
+                const addressKo = acf.address || '서울시 중구 을지로 114-10';
+                const addressDetail = acf.address_detail || acf['address detail'] || '상지빌딩 10층 1003호';
+                const addressEn = acf.address_en || 'Room 1003, 10F, Sangji-Building, 114-10 Eulji-ro, Jung-gu, Seoul, Republic of Korea';
+
+                const phone = acf.phone || '010.0000.0000';
+                const email = acf['e-mail'] || 'example@gmail.com'; // '-'가 들어간 필드명은 대괄호 접근
+                const insta1 = acf.instagram1 || '@chinhyosook_official';
+                const insta2 = acf.instagram2 || '@projectchf';
+
+                // 2. 텍스트 정보 화면에 뿌려주기
+                document.getElementById('address-field').innerHTML = `
+                    <p>${formatAddress(addressName)}<br>${formatAddress(addressKo)} ${formatAddress(addressDetail)}</p>
+                    <p style="margin-top: 1.5rem;">${formatAddress(addressEn)}</p>
+                `;
+                document.getElementById('phone-field').textContent = phone;
+                document.getElementById('email-field').innerHTML = `<a href="mailto:${email}">${email}</a>`;
+
+                let instaHTML = '';
+                if (insta1) instaHTML += `<a href="https://instagram.com/${insta1.replace('@', '')}" target="_blank" rel="noopener noreferrer">${insta1}</a><br>`;
+                if (insta2) instaHTML += `<a href="https://instagram.com/${insta2.replace('@', '')}" target="_blank" rel="noopener noreferrer">${insta2}</a>`;
+                document.getElementById('instagram-field').innerHTML = instaHTML;
+
+                // 관리자 페이지의 구글맵(map) 필드 오류를 우회하여, 입력된 한글 주소(addressKo)를 직접 지도 검색어로 사용합니다.
+                // 구글 지도가 핀을 강제로 찍게 만들기 위해 주소 뒤에 (이름)을 붙이는 트릭을 사용합니다.
+                let mapQuery = encodeURIComponent(addressKo.replace(/\n/g, ' ') + ' (' + addressName + ')');
+
+                // iframe 생성
+                const iframeHTML = `
+                    <iframe
+                        src="https://maps.google.com/maps?q=${mapQuery}&z=17&ie=UTF8&output=embed"
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                `;
+                document.getElementById('map-container').innerHTML = iframeHTML;
+
+                // 4. 로딩 숨기고 진짜 컨텐츠 보여주기
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading').textContent = '데이터를 불러오는 중 에러가 발생했습니다.';
+            }
+        }
+
+        // 페이지가 열리면 즉시 실행!
+        document.addEventListener('DOMContentLoaded', initContactPage);
+    </script>
+
+    <footer class="site-footer">
+        &copy; 2026 Project CH&F. All rights reserved. <br> | website by MJ
+    </footer>
+</body>
+
+</html>
